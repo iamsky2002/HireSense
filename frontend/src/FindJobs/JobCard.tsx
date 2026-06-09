@@ -1,5 +1,6 @@
 import { IconBookmark, IconClockHour3 } from "@tabler/icons-react";
-import { Text, Divider } from "@mantine/core";
+import { Text, Divider, Button } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 const JobCard = (props: any) => {
   return (
@@ -38,6 +39,13 @@ const JobCard = (props: any) => {
           <IconClockHour3 className="h-4 w-4" stroke={1.5} /> {props.postedDaysAgo} days ago
         </div>
       </div>
+
+      
+      <Link to={`/jobs/${props.id}`}>
+        <Button color="brightSun.4" variant="light" fullWidth>
+          View Job
+        </Button>
+      </Link>
 
     </div>
   );

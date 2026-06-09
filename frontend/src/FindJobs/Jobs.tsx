@@ -32,7 +32,7 @@ const Jobs = () => {
       </div>
       <div className="flex flex-wrap gap-5 mt-3 justify-center lg:justify-start">
         {sortedJobs.map((job, index) => (
-          <JobCard key={index} {...job} />
+          <JobCard key={index} id={jobList.indexOf(job)} {...job} />
         ))}
       </div>
     </div>
