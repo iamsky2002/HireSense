@@ -4,11 +4,11 @@ import { IconMapPin, IconHeart } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { talents } from "../Data/TalentData";
 
-// Sidebar showing recommended candidates
+
 const RecommendTalent = (props: any) => {
   const { currentName } = props;
 
-  // Filter out current profile and show top 4
+  
   const recommendedList = talents.filter((t: any) => t.name !== currentName).slice(0, 4);
 
   return (
@@ -25,7 +25,7 @@ const RecommendTalent = (props: any) => {
   );
 };
 
-// Small card component for recommended talent
+
 const RecommendCard = (talent: any) => {
   const [saved, setSaved] = useState(false);
 

@@ -4,7 +4,7 @@ import { IconMapPin, IconHeart } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
 const TalentCard = (props: any) => {
-  // save/favorite state
+  
   const [saved, setSaved] = useState(false);
 
   return (

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Select, Textarea, TagsInput, Button, Grid } from "@mantine/core";
 import { fields, content } from "../Data/PostJob";
 
-// Form component for posting new jobs
+
 const PostJob = () => {
   const [skills, setSkills] = useState<string[]>([]);
   const [jobDescription, setJobDescription] = useState(content);

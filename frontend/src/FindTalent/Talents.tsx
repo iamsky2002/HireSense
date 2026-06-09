@@ -18,7 +18,7 @@ const Talents = () => {
           (a, b) => parseInt(b.expectedCtc.replace("₹", "")) - parseInt(a.expectedCtc.replace("₹", ""))
         );
       default:
-        // Relevance or Most Recent (since talents don't have a date field, we keep default order)
+        
         return list;
     }
   }, [sort]);
