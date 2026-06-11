@@ -4,10 +4,10 @@
 
 A full-stack, multi-role recruitment platform with an **Applied-AI** layer: semantic resume ↔ job matching and a role-aware AI assistant (candidate / employer / admin).
 
-**Status:** 🔨 In active development — the React frontend is in place; the Spring Boot backend and AI layer are being built.
+**Status:** 🔨 In active development — the React frontend is in place; the Spring Boot backend's authentication (JWT + RBAC) is live, and the core job APIs + AI layer are next.
 
-## Planned stack
-- **Frontend:** React 19 · TypeScript · Tailwind CSS · Mantine · Redux Toolkit
+## Tech stack
+- **Frontend:** React 19 · TypeScript · Tailwind CSS · Mantine · React Context
 - **Backend:** Java · Spring Boot · Spring Security + JWT (RBAC) · JPA/Hibernate · MySQL
 - **AI:** Spring AI / LangChain4j · embeddings · Qdrant (vector DB) · RAG agent
 - **DevOps:** Docker · Docker Compose
@@ -20,7 +20,7 @@ A full-stack, multi-role recruitment platform with an **Applied-AI** layer: sema
 ## Repo structure
 ```
 frontend/   React app (UI)
-backend/    Spring Boot API — coming next
+backend/    Spring Boot REST API (auth + JWT)
 ```
 
 ## Getting started (frontend)
@@ -32,7 +32,7 @@ npm start
 Opens `http://localhost:3000`.
 
 ## Backend
-Created in **Phase 0** of the roadmap — will run via Docker Compose alongside MySQL + Qdrant.
+Spring Boot REST API with **JWT authentication + RBAC** (live). Core job APIs are in progress. Will run via Docker Compose alongside MySQL (and Qdrant for the AI layer) in a later phase.
 
 ---
 Built by **Sumit (SKY)**
