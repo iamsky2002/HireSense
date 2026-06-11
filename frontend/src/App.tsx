@@ -14,8 +14,10 @@ import SignupPage from "./Pages/SignupPage";
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { AuthProvider } from "./auth/AuthContext";
+import ProtectedRoute from "./auth/ProtectedRoute";
 
-
+// Layout decides when to show the Header/Footer (auth pages stay clean)
 function AppLayout() {
   const location = useLocation();
   const hideChrome =
@@ -31,10 +33,10 @@ function AppLayout() {
           <Route path="/find-jobs" element={<FindJobsPage />} />
           <Route path="/find-talent" element={<FindTalentPage />} />
           <Route path="/talent-profile" element={<TalentProfilePage />} />
-          <Route path="/post-job" element={<PostJobPage />} />
+          <Route path="/post-job" element={<ProtectedRoute><PostJobPage /></ProtectedRoute>} />
           <Route path="/jobs/:id" element={<JobDescPage />} />
-          <Route path="/job-history" element={<JobHistoryPage />} />
-          <Route path="/posted-jobs" element={<PostedJobsPage />} />
+          <Route path="/job-history" element={<ProtectedRoute><JobHistoryPage /></ProtectedRoute>} />
+          <Route path="/posted-jobs" element={<ProtectedRoute><PostedJobsPage /></ProtectedRoute>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<SignupPage />} />
           <Route path="*" element={<HomePage />} />
@@ -53,7 +55,7 @@ function App() {
     primaryColor: "brightSun",
     primaryShade: 4,
     colors: {
-      
+      // camelCase keys (used by Tailwind classes like text-bright-sun-400)
       brightSun: [
         "#fffbeb",
         "#fff3c6",
@@ -78,7 +80,7 @@ function App() {
         "#454545",
         "#3d3d3d",
       ],
-      
+      // kebab-case aliases — Mantine color props in components use these (e.g. color="bright-sun.4")
       "bright-sun": [
         "#fffbeb",
         "#fff3c6",
@@ -109,7 +111,9 @@ function App() {
   return (
     <MantineProvider defaultColorScheme="dark" theme={theme}>
       <BrowserRouter>
-        <AppLayout />
+        <AuthProvider>
+          <AppLayout />
+        </AuthProvider>
       </BrowserRouter>
     </MantineProvider>
   );
