@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// Auth ke REST endpoints (patla layer — request lo, service ko do)
+// Auth endpoints: register and login
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -22,14 +22,12 @@ public class AuthController {
         this.authService = authService;
     }
 
-    // @Valid -> RegisterRequest ke validation rules check honge
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest req) {
         AuthResponse res = authService.register(req);
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
-    // Login: email+password verify -> JWT token return
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
         return ResponseEntity.ok(authService.login(req));

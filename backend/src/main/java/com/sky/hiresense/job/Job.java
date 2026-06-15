@@ -1,4 +1,4 @@
-﻿package com.sky.hiresense.job;
+package com.sky.hiresense.job;
 
 import com.sky.hiresense.company.Company;
 import com.sky.hiresense.skill.Skill;
@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+// A job posting. Indexed on title/location/posted_at for faster search + sorting.
 @Entity
 @Table(name = "jobs", indexes = {
         @Index(name = "idx_jobs_title", columnList = "title"),
@@ -45,6 +46,7 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // each job belongs to one company; lazy load
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "company_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_job_company"))
@@ -75,6 +77,7 @@ public class Job {
     @Column(name = "posted_at", updatable = false, nullable = false)
     private Instant postedAt;
 
+    // required skills, via job_skills join table
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "job_skills",

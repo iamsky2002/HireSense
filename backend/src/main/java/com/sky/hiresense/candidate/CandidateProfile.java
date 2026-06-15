@@ -1,4 +1,4 @@
-﻿package com.sky.hiresense.candidate;
+package com.sky.hiresense.candidate;
 
 import com.sky.hiresense.skill.Skill;
 import com.sky.hiresense.user.User;
@@ -22,6 +22,8 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
+// Extra candidate details, one-to-one with User.
+// @MapsId matlab iski PK aur user ki PK same hoti hai (user_id hi PK aur FK dono)
 @Entity
 @Table(name = "candidate_profile")
 @Getter
@@ -51,9 +53,11 @@ public class CandidateProfile {
     @Column(name = "resume_url", length = 512)
     private String resumeUrl;
 
+    // resume text, for AI job matching later
     @Column(name = "resume_text", columnDefinition = "TEXT")
     private String resumeText;
 
+    // candidate skills, via candidate_skills join table
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "candidate_skills",

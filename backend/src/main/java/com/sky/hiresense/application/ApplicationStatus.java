@@ -1,6 +1,6 @@
 package com.sky.hiresense.application;
 
-// Application lifecycle states (ARCHITECTURE.md §6.2 "applications").
+// application lifecycle states
 public enum ApplicationStatus {
     APPLIED,
     SHORTLISTED,

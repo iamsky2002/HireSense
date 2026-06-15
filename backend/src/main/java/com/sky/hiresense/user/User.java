@@ -1,4 +1,4 @@
-﻿package com.sky.hiresense.user;
+package com.sky.hiresense.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,6 +18,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
+// A user account. role drives RBAC.
+// table ka naam "users" isliye kyunki MySQL me USER reserved keyword hai
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(name = "uk_users_email", columnNames = "email"))
 @Getter
@@ -34,6 +36,7 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    // BCrypt hash, never the raw password
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
@@ -44,6 +47,7 @@ public class User {
     @Column(nullable = false, length = 20)
     private Role role;
 
+    // admins can deactivate an account by setting this false
     @Builder.Default
     @Column(nullable = false)
     private boolean enabled = true;

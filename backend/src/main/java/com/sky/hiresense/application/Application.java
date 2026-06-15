@@ -24,8 +24,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
-// A candidate applying to a job (ARCHITECTURE.md §6.2 "applications").
-// UNIQUE(job_id, candidate_id) prevents double-apply.
+// A candidate's application to a job.
+// UNIQUE(job_id, candidate_id) stops the same candidate applying twice
 @Entity
 @Table(name = "applications",
         uniqueConstraints = @UniqueConstraint(

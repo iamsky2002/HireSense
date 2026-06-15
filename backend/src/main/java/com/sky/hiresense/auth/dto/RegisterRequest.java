@@ -1,4 +1,4 @@
-﻿package com.sky.hiresense.auth.dto;
+package com.sky.hiresense.auth.dto;
 
 import com.sky.hiresense.user.Role;
 import jakarta.validation.constraints.Email;
@@ -21,6 +21,7 @@ public class RegisterRequest {
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
+    // only CANDIDATE or EMPLOYER allowed at signup, not ADMIN
     @NotNull
     private Role role;
 }

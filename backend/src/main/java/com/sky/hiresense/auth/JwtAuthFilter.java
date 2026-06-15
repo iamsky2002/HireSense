@@ -14,7 +14,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-// Har request pe ek baar chalta hai: token padho -> verify karo -> user ko logged-in mark karo
+// Runs once per request: reads the JWT from the Authorization header,
+// verifies it and marks the user as authenticated.
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -32,7 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-        // Token "Bearer <token>" format me aata hai
+        // token comes in as "Bearer <token>"
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
 
@@ -40,10 +41,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String email = jwtUtil.extractEmail(token);
 
                 userRepository.findByEmail(email).ifPresent(user -> {
-                    // Role ko "ROLE_" prefix ke saath authority banao (hasRole() ke liye zaroori)
+                    // hasRole() ko "ROLE_" prefix chahiye, warna role match nahi hota
                     var authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
                     var auth = new UsernamePasswordAuthenticationToken(user, null, List.of(authority));
-                    // User ab "logged-in" hai is request ke liye
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 });
             }

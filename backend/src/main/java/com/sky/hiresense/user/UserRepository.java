@@ -1,4 +1,4 @@
-﻿package com.sky.hiresense.user;
+package com.sky.hiresense.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

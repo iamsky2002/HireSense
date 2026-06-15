@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-// Simple endpoint to check the backend is running
+// simple health-check to confirm the backend is up
 @RestController
 @RequestMapping("/api")
 public class HealthController {

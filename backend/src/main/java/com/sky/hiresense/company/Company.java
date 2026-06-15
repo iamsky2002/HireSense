@@ -1,4 +1,4 @@
-﻿package com.sky.hiresense.company;
+package com.sky.hiresense.company;
 
 import com.sky.hiresense.user.User;
 import jakarta.persistence.Column;
@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// An employer's company; one company can have many jobs
 @Entity
 @Table(name = "companies")
 @Getter
@@ -33,6 +34,7 @@ public class Company {
     @Column(nullable = false)
     private String name;
 
+    // owner is used for RBAC: an employer can only manage their own company's jobs
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_user_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_company_owner"))

@@ -1,4 +1,4 @@
-﻿package com.sky.hiresense.skill;
+package com.sky.hiresense.skill;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// A skill tag (e.g. "Java"), shared across jobs and candidates.
+// unique name so each skill is stored only once
 @Entity
 @Table(name = "skills", uniqueConstraints = @UniqueConstraint(name = "uk_skills_name", columnNames = "name"))
 @Getter

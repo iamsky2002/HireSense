@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
-// JWT token banana aur verify karna
+// Generates and validates JWT tokens
 @Component
 public class JwtUtil {
 
@@ -19,12 +19,11 @@ public class JwtUtil {
 
     public JwtUtil(@Value("${app.jwt.secret}") String secret,
                    @Value("${app.jwt.expiration-ms}") long expirationMs) {
-        // Secret se ek signing key banate hain (HS256 ke liye >= 32 chars chahiye)
+        // HS256 signing key, secret must be at least 32 chars
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationMs = expirationMs;
     }
 
-    // Login ke baad token banao — email (subject) + role + userId andar
     public String generateToken(User user) {
         Date now = new Date();
         return Jwts.builder()
@@ -37,12 +36,10 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Token se email nikaalo
     public String extractEmail(String token) {
         return parse(token).getSubject();
     }
 
-    // Token valid hai? (signature + expiry check)
     public boolean isValid(String token) {
         try {
             parse(token);
@@ -52,6 +49,7 @@ public class JwtUtil {
         }
     }
 
+    // verifies signature + expiry, throws if invalid
     private Claims parse(String token) {
         return Jwts.parser()
                 .verifyWith(key)
