@@ -3,6 +3,7 @@ package com.sky.hiresense.auth;
 import com.sky.hiresense.auth.dto.AuthResponse;
 import com.sky.hiresense.auth.dto.LoginRequest;
 import com.sky.hiresense.auth.dto.RegisterRequest;
+import com.sky.hiresense.user.Role;
 import com.sky.hiresense.user.User;
 import com.sky.hiresense.user.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-// Auth ki saari business logic yahan (controller patla rehta hai)
+// Register and login logic
 @Service
 public class AuthService {
 
@@ -25,12 +26,16 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest req) {
-        // 1) Email pehle se to registered nahi?
+        // public signup sirf candidate/employer ke liye hai, admin self-register nahi kar sakta
+        if (req.getRole() == Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid role");
+        }
+
         if (userRepository.existsByEmail(req.getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already registered");
         }
 
-        // 2) Password BCrypt se hash karke user banao
+        // store the BCrypt hash, never the raw password
         User user = User.builder()
                 .fullName(req.getFullName())
                 .email(req.getEmail())
@@ -38,29 +43,25 @@ public class AuthService {
                 .role(req.getRole())
                 .build();
 
-        // 3) DB me save
         User saved = userRepository.save(user);
 
-        // 4) Response (token register pe nahi — login pe milega)
+        // no token here, user has to log in to get one
         return toResponse(saved, null);
     }
 
     public AuthResponse login(LoginRequest req) {
-        // 1) Email se user dhoondo
         User user = userRepository.findByEmail(req.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
 
-        // 2) Password verify (raw vs stored hash) — ek hi error message (security)
+        // galat email ho ya galat password, dono pe same error bhejte hain taki pata na chale kaunsi email registered hai
         if (!passwordEncoder.matches(req.getPassword(), user.getPasswordHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
-        // 3) JWT token banao aur response me bhejo
         String token = jwtUtil.generateToken(user);
         return toResponse(user, token);
     }
 
-    // User -> AuthResponse (token optional)
     private AuthResponse toResponse(User user, String token) {
         return AuthResponse.builder()
                 .token(token)
