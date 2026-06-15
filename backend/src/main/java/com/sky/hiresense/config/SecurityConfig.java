@@ -1,8 +1,9 @@
-﻿package com.sky.hiresense.config;
+package com.sky.hiresense.config;
 
 import com.sky.hiresense.auth.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,14 +19,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-@EnableMethodSecurity  // @PreAuthorize chalne ke liye
+@EnableMethodSecurity  // enables @PreAuthorize on methods
 public class SecurityConfig {
 
+    // BCrypt hashing for passwords
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // stateless JWT setup, so no sessions and no CSRF
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
         http
@@ -33,13 +36,19 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/health").permitAll()  // public
-                .anyRequest().authenticated()                                 // baaki: valid token chahiye
+                // public, no login needed
+                .requestMatchers("/api/auth/**", "/api/health", "/error").permitAll()
+                // job list aur detail public hai; /* use kiya /** nahi, taki aage nested routes (jaise /api/jobs/5/applicants) by default protected rahein
+                .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*").permitAll()
+                // everything else needs a valid token
+                .anyRequest().authenticated()
             )
+            // run our JWT filter before the default auth filter
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
+    // allow the React frontend (localhost:3000) to call the API
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
