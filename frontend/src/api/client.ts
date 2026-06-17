@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({ baseURL: "http://localhost:8080/api" });
 
-// Har request me JWT token attach karo (agar logged in hai)
+// har request ke saath JWT token bhej do (agar logged in ho)
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;

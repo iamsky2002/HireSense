@@ -1,4 +1,4 @@
-
+// Explore career opportunities section showing a grid of categories
 import { Carousel } from "@mantine/carousel";
 import { jobCategory } from "../Data/Data";
 const NewJobCategory = () => {

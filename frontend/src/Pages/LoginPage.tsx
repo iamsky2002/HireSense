@@ -26,7 +26,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const user = await login(email, password);
-      // Role ke hisaab se bhejo
+      // redirect based on role
       navigate(user.role === "EMPLOYER" ? "/posted-jobs" : "/find-jobs");
     } catch (err) {
       setServerError("Invalid email or password");

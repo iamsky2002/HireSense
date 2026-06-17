@@ -1,7 +1,7 @@
 import { TextInput, Avatar } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 
-
+// Main hero section with search bar and job stats
 const DreamJob = () => {
   return (
     <div className="flex items-center px-16 ">

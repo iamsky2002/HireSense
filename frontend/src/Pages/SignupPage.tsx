@@ -33,7 +33,7 @@ const SignupPage = () => {
     setLoading(true);
     try {
       await register({ fullName: name, email, password, role });
-      // Register ke baad seedha login bhi kara dete hain
+      // log the user in right after registering
       const user = await login(email, password);
       navigate(user.role === "EMPLOYER" ? "/posted-jobs" : "/find-jobs");
     } catch (err: any) {

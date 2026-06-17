@@ -1,7 +1,7 @@
 import Marquee from "react-fast-marquee";
 import { companies } from "../Data/Data";
 
-
+// Scrolling list of trusted company logos
 const Companies = () => {
   return (
     <div className="mt-20 pb-5">

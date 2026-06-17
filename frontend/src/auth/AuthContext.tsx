@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // App khulte hi: agar token saved hai to user ki info le aao
+  // app khulte hi, agar token saved hai to user ki info le aao
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
