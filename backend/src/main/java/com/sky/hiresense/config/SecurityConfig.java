@@ -1,6 +1,7 @@
 package com.sky.hiresense.config;
 
 import com.sky.hiresense.auth.JwtAuthFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,10 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity  // enables @PreAuthorize on methods
 public class SecurityConfig {
+
+    // allowed frontend origins (comma-separated); defaults to local dev, override in prod
+    @Value("${app.cors.allowed-origins:http://localhost:3000}")
+    private List<String> allowedOrigins;
 
     // BCrypt hashing for passwords
     @Bean
@@ -48,11 +53,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // allow the React frontend (localhost:3000) to call the API
+    // allow the configured frontend origin(s) to call the API
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedOrigins(allowedOrigins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

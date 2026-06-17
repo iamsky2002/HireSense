@@ -1,6 +1,9 @@
 import axios from "axios";
 
-const api = axios.create({ baseURL: "http://localhost:8080/api" });
+// in production set REACT_APP_API_URL to the deployed backend (e.g. https://api.example.com/api)
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:8080/api",
+});
 
 // har request ke saath JWT token bhej do (agar logged in ho)
 api.interceptors.request.use((config) => {
