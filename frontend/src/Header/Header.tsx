@@ -1,5 +1,5 @@
 import { Button, Menu, Avatar } from "@mantine/core";
-import { IconChefHatFilled, IconLogout } from "@tabler/icons-react";
+import { IconChefHatFilled, IconLogout, IconBrandGithub } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 import NavLinks from "./NavLink";
 import { useAuth } from "../auth/AuthContext";
@@ -22,29 +22,41 @@ const Header = () => {
 
       <NavLinks role={user?.role} />
 
-      {user ? (
-        <Menu shadow="md" width={180} position="bottom-end">
-          <Menu.Target>
-            <div className="flex items-center gap-2 cursor-pointer">
-              <span className="text-mine-shaft-100">{user.fullName}</span>
-              <Avatar color="brightSun.4" radius="xl">
-                {user.fullName.charAt(0).toUpperCase()}
-              </Avatar>
-            </div>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item leftSection={<IconLogout size={16} />} color="red" onClick={handleLogout}>
-              Logout
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      ) : (
-        <Link to="/login">
-          <Button color="brightSun.4" autoContrast>
-            Login
-          </Button>
-        </Link>
-      )}
+      <div className="flex items-center gap-4">
+        <a
+          href="https://github.com/iamsky2002/HireSense"
+          target="_blank"
+          rel="noreferrer"
+          title="View source on GitHub"
+          className="text-mine-shaft-300 hover:text-bright-sun-400 transition-colors"
+        >
+          <IconBrandGithub size={26} />
+        </a>
+
+        {user ? (
+          <Menu shadow="md" width={180} position="bottom-end">
+            <Menu.Target>
+              <div className="flex items-center gap-2 cursor-pointer">
+                <span className="text-mine-shaft-100">{user.fullName}</span>
+                <Avatar color="brightSun.4" radius="xl">
+                  {user.fullName.charAt(0).toUpperCase()}
+                </Avatar>
+              </div>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item leftSection={<IconLogout size={16} />} color="red" onClick={handleLogout}>
+                Logout
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        ) : (
+          <Link to="/login">
+            <Button color="brightSun.4" autoContrast>
+              Login
+            </Button>
+          </Link>
+        )}
+      </div>
     </div>
   );
 };
