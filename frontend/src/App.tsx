@@ -25,7 +25,7 @@ function AppLayout() {
     location.pathname === "/login" || location.pathname === "/register";
 
   return (
-    <div className="min-h-[100vh] bg-mine-shaft-950 font-[Poppins] flex flex-col relative">
+    <div className="min-h-[100vh] bg-gradient-to-b from-mine-shaft-900 to-mine-shaft-950 font-[Poppins] flex flex-col relative">
       {!hideChrome && <Header />}
       {!hideChrome && <Divider size="xs" mx="md" />}
 
@@ -71,16 +71,16 @@ function App() {
         "#7a320d",
       ],
       mineShaft: [
-        "#f6f6f6",
-        "#e7e7e7",
-        "#d1d1d1",
-        "#b0b0b0",
-        "#888888",
-        "#6d6d6d",
-        "#5d5d5d",
-        "#4f4f4f",
-        "#454545",
-        "#3d3d3d",
+        "#f8fafc",
+        "#f1f5f9",
+        "#e2e8f0",
+        "#cbd5e1",
+        "#94a3b8",
+        "#64748b",
+        "#475569",
+        "#334155",
+        "#1e293b",
+        "#0f172a",
       ],
       // kebab-case aliases (Mantine color props use these, e.g. color="bright-sun.4")
       "bright-sun": [
@@ -96,16 +96,16 @@ function App() {
         "#7a320d",
       ],
       "mine-shaft": [
-        "#f6f6f6",
-        "#e7e7e7",
-        "#d1d1d1",
-        "#b0b0b0",
-        "#888888",
-        "#6d6d6d",
-        "#5d5d5d",
-        "#4f4f4f",
-        "#454545",
-        "#3d3d3d",
+        "#f8fafc",
+        "#f1f5f9",
+        "#e2e8f0",
+        "#cbd5e1",
+        "#94a3b8",
+        "#64748b",
+        "#475569",
+        "#334155",
+        "#1e293b",
+        "#0f172a",
       ],
     },
   });
