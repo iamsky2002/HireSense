@@ -35,6 +35,24 @@ const LoginPage = () => {
     }
   };
 
+  // demo login lets reviewers jump in without signing up; hidden if REACT_APP_DEMO_MODE=false
+  const demoMode = process.env.REACT_APP_DEMO_MODE !== "false";
+
+  const demoLogin = async (demoEmail: string, demoPassword: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setServerError("");
+    setLoading(true);
+    try {
+      const user = await login(demoEmail, demoPassword);
+      navigate(user.role === "EMPLOYER" ? "/posted-jobs" : "/find-jobs");
+    } catch (err) {
+      setServerError("Demo login failed - is the backend running?");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-[100vh] flex items-center justify-center px-4 bg-mine-shaft-950">
       <div className="w-full max-w-[420px] bg-mine-shaft-900 border border-mine-shaft-800 rounded-2xl p-8 flex flex-col gap-5">
@@ -73,6 +91,35 @@ const LoginPage = () => {
         <Button color="brightSun.4" autoContrast onClick={handleLogin} loading={loading} fullWidth>
           Login
         </Button>
+
+        {demoMode && (
+          <div className="border-t border-mine-shaft-800 pt-4">
+            <div className="text-xs text-center text-mine-shaft-400 mb-3">
+              Quick demo login (for reviewers, no signup needed)
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="light"
+                color="brightSun.4"
+                className="grow"
+                onClick={() => demoLogin("ravi@test.com", "secret123")}
+              >
+                Candidate
+              </Button>
+              <Button
+                variant="light"
+                color="brightSun.4"
+                className="grow"
+                onClick={() => demoLogin("test@example.com", "secret123")}
+              >
+                Employer
+              </Button>
+            </div>
+            <div className="text-[11px] text-center text-mine-shaft-500 mt-2">
+              These are seeded demo accounts. Real signups create their own.
+            </div>
+          </div>
+        )}
 
         <div className="text-sm text-center text-mine-shaft-300">
           Don't have an account?{" "}
