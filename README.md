@@ -1,38 +1,44 @@
-# 🤖 HireSense AI — Intelligent Recruitment & Job Matching Platform
+# 🎯 HireSense — Intelligent Recruitment & Job Matching Platform
 
-> *Intelligent Recruitment & Job Matching Platform*
+> A full-stack, multi-role recruitment platform — search and apply for jobs, manage applicants, and track every step in one place.
 
-A full-stack, multi-role recruitment platform with an **Applied-AI** layer: semantic resume ↔ job matching and a role-aware AI assistant (candidate / employer / admin).
+### 🌐 Live demo: **[hire-sense-phi.vercel.app](https://hire-sense-phi.vercel.app)**
 
-**Status:** 🔨 In active development — the React frontend is in place; the Spring Boot backend's authentication (JWT + RBAC) is live, and the core job APIs + AI layer are next.
+> Use the **Quick Demo Login** on the login page (Candidate / Employer) to explore without signing up.
+> Frontend on Vercel, backend (Dockerized Spring Boot + MySQL) on AWS EC2.
 
 ## Tech stack
 - **Frontend:** React 19 · TypeScript · Tailwind CSS · Mantine · React Context
-- **Backend:** Java · Spring Boot · Spring Security + JWT (RBAC) · JPA/Hibernate · MySQL
-- **AI:** Spring AI / LangChain4j · embeddings · Qdrant (vector DB) · RAG agent
-- **DevOps:** Docker · Docker Compose
+- **Backend:** Java 21 · Spring Boot 3.5 · Spring Security + JWT (RBAC) · JPA/Hibernate · MySQL
+- **DevOps:** Docker · Docker Compose · AWS EC2 (Caddy reverse proxy + HTTPS) · Vercel
+- **Planned (AI layer):** Spring AI · embeddings · Qdrant (vector DB) · RAG assistant
 
-## What it does (target)
-- **Candidates** — search & apply for jobs, upload a resume, get AI-matched jobs, ask an AI assistant.
-- **Employers** — post jobs, review applicants, find best-fit candidates with AI.
-- **Admin** — manage users/jobs, view platform stats.
+## What it does
+- **Candidates** — search & apply for jobs (one click), upload a PDF resume, track every application's status.
+- **Employers** — post jobs, review applicants, update statuses, browse a privacy-safe talent directory.
+- **Security** — JWT auth with role-based access control and ownership checks; tested with JUnit + Mockito.
 
 ## Repo structure
 ```
 frontend/   React app (UI)
-backend/    Spring Boot REST API (auth + JWT)
+backend/    Spring Boot REST API (auth, jobs, applications, profiles, talent + unit tests)
 ```
 
-## Getting started (frontend)
+## Run locally
+**Frontend:**
 ```bash
 cd frontend
-npm install
-npm start
+npm install --legacy-peer-deps
+npm start            # http://localhost:3000
 ```
-Opens `http://localhost:3000`.
+**Backend + MySQL (Docker):**
+```bash
+JWT_SECRET=<a-long-random-secret> docker compose up --build
+```
+Or run the backend directly with Maven (JDK 21) against a local MySQL — see `backend/.env.example`.
 
-## Backend
-Spring Boot REST API with **JWT authentication + RBAC** (live). Core job APIs are in progress. Will run via Docker Compose alongside MySQL (and Qdrant for the AI layer) in a later phase.
+## Status
+Phases 0–2 complete and deployed: setup, auth + RBAC, and full core CRUD (jobs, applications, profiles, talent) with unit tests. AI matching + assistant are the next phases.
 
 ---
-Built by **Sumit (SKY)**
+Designed & Developed by **Sumeet Kumar (SKY)** · [github.com/iamsky2002](https://github.com/iamsky2002)
