@@ -41,9 +41,6 @@ const NewJobCategory = () => {
               <div className="text-sm text-center text-mine-shaft-300 mt-2">
                 {category.desc}
               </div>
-              <div className="text-bright-sun-300 text-lg mt-3">
-                {category.jobs}+ new job posted
-              </div>
             </div>
           </Carousel.Slide>
         ))}

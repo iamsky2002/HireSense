@@ -2,8 +2,8 @@ import DreamJob from "../LandingPage/DreamJob";
 import Companies from "../LandingPage/Companies";
 import NewJobCategory from "../LandingPage/NewJobCategory";
 import Working from "../LandingPage/Working";
-import Testimonials from "../LandingPage/Testimonials";
-import Subscribe from "../LandingPage/Subscribe";
+import Features from "../LandingPage/Features";
+import CallToAction from "../LandingPage/CallToAction";
 
 const HomePage = () => {
   return (
@@ -12,8 +12,8 @@ const HomePage = () => {
       <Companies />
       <NewJobCategory />
       <Working />
-      <Testimonials />
-      <Subscribe />
+      <Features />
+      <CallToAction />
     </div>
   );
 };
