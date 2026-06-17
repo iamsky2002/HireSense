@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Role } from "../api/auth";
 
-// Nav links role ke hisaab se filter hote hain
+// nav links are filtered by role
 const NavLinks = ({ role }: { role?: Role }) => {
   const allLinks = [
     { name: "Find Jobs", url: "/find-jobs", roles: ["CANDIDATE", "ADMIN"] as Role[], showLoggedOut: true },
@@ -9,9 +9,10 @@ const NavLinks = ({ role }: { role?: Role }) => {
     { name: "Post Job", url: "/post-job", roles: ["EMPLOYER", "ADMIN"] as Role[] },
     { name: "Posted Jobs", url: "/posted-jobs", roles: ["EMPLOYER", "ADMIN"] as Role[] },
     { name: "Job History", url: "/job-history", roles: ["CANDIDATE", "ADMIN"] as Role[] },
+    { name: "My Profile", url: "/my-profile", roles: ["CANDIDATE", "ADMIN"] as Role[] },
   ];
 
-  // Logged in -> role ke links; logged out -> sirf browse wale
+  // logged in: links for the role; logged out: only the browse ones
   const links = allLinks.filter((l) => (role ? l.roles.includes(role) : l.showLoggedOut));
 
   const location = useLocation();
@@ -20,11 +21,10 @@ const NavLinks = ({ role }: { role?: Role }) => {
       {links.map((link, index) => (
         <div
           key={index}
-          className={`${
-            location.pathname === link.url
+          className={`${location.pathname === link.url
               ? "border-bright-sun-400 text-bright-sun-400"
               : "border-transparent"
-          } border-t-[3px] h-full flex items-center`}
+            } border-t-[3px] h-full flex items-center`}
         >
           <Link to={link.url}>{link.name}</Link>
         </div>

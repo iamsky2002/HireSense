@@ -9,6 +9,7 @@ import PostJobPage from "./Pages/PostJobPage";
 import JobDescPage from "./Pages/JobDescPage";
 import JobHistoryPage from "./Pages/JobHistoryPage";
 import PostedJobsPage from "./Pages/PostedJobsPage";
+import MyProfilePage from "./Pages/MyProfilePage";
 import LoginPage from "./Pages/LoginPage";
 import SignupPage from "./Pages/SignupPage";
 import Header from "./Header/Header";
@@ -32,11 +33,12 @@ function AppLayout() {
         <Routes>
           <Route path="/find-jobs" element={<FindJobsPage />} />
           <Route path="/find-talent" element={<FindTalentPage />} />
-          <Route path="/talent-profile" element={<TalentProfilePage />} />
+          <Route path="/talent-profile/:id" element={<ProtectedRoute><TalentProfilePage /></ProtectedRoute>} />
           <Route path="/post-job" element={<ProtectedRoute><PostJobPage /></ProtectedRoute>} />
           <Route path="/jobs/:id" element={<JobDescPage />} />
           <Route path="/job-history" element={<ProtectedRoute><JobHistoryPage /></ProtectedRoute>} />
           <Route path="/posted-jobs" element={<ProtectedRoute><PostedJobsPage /></ProtectedRoute>} />
+          <Route path="/my-profile" element={<ProtectedRoute><MyProfilePage /></ProtectedRoute>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<SignupPage />} />
           <Route path="*" element={<HomePage />} />
@@ -80,7 +82,7 @@ function App() {
         "#454545",
         "#3d3d3d",
       ],
-      // kebab-case aliases — Mantine color props in components use these (e.g. color="bright-sun.4")
+      // kebab-case aliases (Mantine color props use these, e.g. color="bright-sun.4")
       "bright-sun": [
         "#fffbeb",
         "#fff3c6",
