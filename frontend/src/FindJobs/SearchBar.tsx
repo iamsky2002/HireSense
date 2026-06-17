@@ -14,8 +14,14 @@ const jobTypeOptions = [
 
 // backend search only filters on title/location/type, so just those 3 here
 // (salary-range / experience filter not in backend search yet, future enhancement)
-const SearchBar = ({ onSearch }: { onSearch: (filters: JobFilters) => void }) => {
-  const [title, setTitle] = useState("");
+const SearchBar = ({
+  onSearch,
+  initialTitle = "",
+}: {
+  onSearch: (filters: JobFilters) => void;
+  initialTitle?: string;
+}) => {
+  const [title, setTitle] = useState(initialTitle);
   const [location, setLocation] = useState("");
   const [type, setType] = useState<string>("");
 
