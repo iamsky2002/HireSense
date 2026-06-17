@@ -1,7 +1,7 @@
+// Mock data for the app (companies, job categories, etc)
+// TODO: Replace with real API data later
 
-
-
-
+// TypeScript interfaces describing the shape of each data object
 interface JobCategory {
   name: string;
   desc: string;

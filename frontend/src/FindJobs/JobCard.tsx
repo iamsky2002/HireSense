@@ -15,7 +15,12 @@ const JobCard = (props: any) => {
       <div className="flex justify-between items-start">
         <div className="flex gap-3 items-center">
           <div className="p-2 bg-mine-shaft-800 rounded-md shrink-0">
-            <img className="h-7 w-7 object-contain" src={`/Icons/${props.company}.png`} alt={`${props.company} logo`} />
+            <img
+              className="h-7 w-7 object-contain"
+              src={`/Icons/${props.company}.png`}
+              alt={`${props.company} logo`}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+            />
           </div>
           <div>
             <div className="font-bold text-mine-shaft-100">{props.jobTitle}</div>
@@ -40,7 +45,7 @@ const JobCard = (props: any) => {
         </div>
       </div>
 
-      
+      {/* Opens the full job detail page */}
       <Link to={`/jobs/${props.id}`}>
         <Button color="brightSun.4" variant="light" fullWidth>
           View Job
