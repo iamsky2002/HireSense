@@ -5,7 +5,7 @@ import ExpCard from "./ExpCard";
 import CertiCard from "./CertifiCard";
 
 const Profile = (props: any) => {
-  
+  // Use passed props, fallback to imported profile data
   const {
     name = profile.name,
     role = profile.role,
@@ -16,7 +16,7 @@ const Profile = (props: any) => {
     experience = profile.experience,
     certifications = profile.certifications,
     image = "avatar-1",
-    
+    // expected ctc with fallback
     expectedCtc = "₹48 - 60LPA"
   } = props;
 
