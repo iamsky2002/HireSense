@@ -16,11 +16,11 @@ const Working = () => {
       <div className="flex px-16 justify-between items-center">
         <div className="w-1/2 flex justify-center">
           <div className="relative">
-            <img className="w-[30rem]" src="/Working/girl.png" alt="girl" />
+            <img className="w-[30rem]" src="/Working/Girl.png" alt="girl" />
             <div className="w-36 flex top-[15%] right-4 absolute flex-col items-center gap-1 border border-bright-sun-400 rounded-xl py-3 px-1 backdrop-blur-md">
               <Avatar
                 className="!h-16 !w-16"
-                src="/Avatar-4.png"
+                src="/avatar-4.png"
                 alt="it's me"
               />
               <div className="text-sm font-semibold text-mine-shaft-200 text-center leading-tight mt-1">
