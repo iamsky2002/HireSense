@@ -57,6 +57,14 @@ public class Application {
     @Column(nullable = false, length = 20)
     private ApplicationStatus status = ApplicationStatus.APPLIED;
 
+    // rejection reason + the stage it was rejected from (no full history, just these two)
+    @Column(name = "rejection_reason", length = 500)
+    private String rejectionReason;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rejected_from_stage", length = 20)
+    private ApplicationStatus rejectedFromStage;
+
     @CreationTimestamp
     @Column(name = "applied_at", updatable = false, nullable = false)
     private Instant appliedAt;

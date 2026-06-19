@@ -62,10 +62,23 @@ public class ApplicationService {
     }
 
     @Transactional
-    public ApplicationResponse updateStatus(Long applicationId, ApplicationStatus status, User employer) {
+    public ApplicationResponse updateStatus(Long applicationId, ApplicationStatus status, String reason, User employer) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application not found"));
         ensureJobOwner(application.getJob(), employer);
+
+        if (status == ApplicationStatus.REJECTED) {
+            // remember the stage it was rejected from (skip if already rejected)
+            if (application.getStatus() != ApplicationStatus.REJECTED) {
+                application.setRejectedFromStage(application.getStatus());
+            }
+            application.setRejectionReason(reason);
+        } else {
+            // moved back into the pipeline, so clear any old rejection info
+            application.setRejectedFromStage(null);
+            application.setRejectionReason(null);
+        }
+
         application.setStatus(status);
         return toResponse(applicationRepository.save(application));
     }
@@ -85,6 +98,8 @@ public class ApplicationService {
                 .candidateName(candidate.getFullName())
                 .candidateEmail(candidate.getEmail())
                 .status(application.getStatus())
+                .rejectionReason(application.getRejectionReason())
+                .rejectedFromStage(application.getRejectedFromStage())
                 .appliedAt(application.getAppliedAt())
                 .build();
     }
@@ -99,6 +114,8 @@ public class ApplicationService {
                 .location(job.getLocation())
                 .type(job.getType())
                 .status(application.getStatus())
+                .rejectionReason(application.getRejectionReason())
+                .rejectedFromStage(application.getRejectedFromStage())
                 .appliedAt(application.getAppliedAt())
                 .build();
     }

@@ -9,4 +9,7 @@ public class UpdateStatusRequest {
 
     @NotNull
     private ApplicationStatus status;
+
+    // only sent with REJECTED (optional)
+    private String reason;
 }

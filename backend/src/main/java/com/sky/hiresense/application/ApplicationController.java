@@ -57,6 +57,6 @@ public class ApplicationController {
     public ApplicationResponse updateStatus(@PathVariable Long id,
                                             @Valid @RequestBody UpdateStatusRequest req,
                                             @AuthenticationPrincipal User employer) {
-        return applicationService.updateStatus(id, req.getStatus(), employer);
+        return applicationService.updateStatus(id, req.getStatus(), req.getReason(), employer);
     }
 }

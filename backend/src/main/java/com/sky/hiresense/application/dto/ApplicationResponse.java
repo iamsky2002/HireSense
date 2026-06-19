@@ -17,5 +17,7 @@ public class ApplicationResponse {
     private String location;
     private EmploymentType type;
     private ApplicationStatus status;
+    private String rejectionReason;
+    private ApplicationStatus rejectedFromStage;
     private Instant appliedAt;
 }

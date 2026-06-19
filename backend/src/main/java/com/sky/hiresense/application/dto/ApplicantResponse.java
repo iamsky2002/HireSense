@@ -14,5 +14,7 @@ public class ApplicantResponse {
     private String candidateName;
     private String candidateEmail;
     private ApplicationStatus status;
+    private String rejectionReason;
+    private ApplicationStatus rejectedFromStage;
     private Instant appliedAt;
 }

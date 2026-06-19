@@ -1,9 +1,14 @@
 package com.sky.hiresense.application;
 
-// application lifecycle states
+// hiring pipeline order; REJECTED can happen at any stage.
+// stored as STRING, so adding values here is safe for existing rows.
 public enum ApplicationStatus {
     APPLIED,
+    UNDER_REVIEW,
     SHORTLISTED,
-    REJECTED,
-    HIRED
+    ASSESSMENT,
+    INTERVIEW,
+    OFFERED,
+    HIRED,
+    REJECTED
 }
