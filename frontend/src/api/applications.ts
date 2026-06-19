@@ -2,7 +2,37 @@ import api from "./client";
 import { EmploymentType } from "./jobs";
 
 // mirrors the backend ApplicationStatus enum
-export type ApplicationStatus = "APPLIED" | "SHORTLISTED" | "REJECTED" | "HIRED";
+export type ApplicationStatus =
+  | "APPLIED"
+  | "UNDER_REVIEW"
+  | "SHORTLISTED"
+  | "ASSESSMENT"
+  | "INTERVIEW"
+  | "OFFERED"
+  | "HIRED"
+  | "REJECTED";
+
+// happy-path order of the hiring pipeline; REJECTED is a separate terminal state
+export const STATUS_FLOW: ApplicationStatus[] = [
+  "APPLIED",
+  "UNDER_REVIEW",
+  "SHORTLISTED",
+  "ASSESSMENT",
+  "INTERVIEW",
+  "OFFERED",
+  "HIRED",
+];
+
+export const statusLabel: Record<ApplicationStatus, string> = {
+  APPLIED: "Applied",
+  UNDER_REVIEW: "In Review",
+  SHORTLISTED: "Shortlisted",
+  ASSESSMENT: "Assessment",
+  INTERVIEW: "Interview",
+  OFFERED: "Offered",
+  HIRED: "Hired",
+  REJECTED: "Rejected",
+};
 
 // shape of ApplicationResponse from the backend
 export interface ApplicationResponse {
@@ -13,6 +43,8 @@ export interface ApplicationResponse {
   location: string | null;
   type: EmploymentType | null;
   status: ApplicationStatus;
+  rejectionReason: string | null;
+  rejectedFromStage: ApplicationStatus | null;
   appliedAt: string;
 }
 
@@ -23,6 +55,8 @@ export interface ApplicantResponse {
   candidateName: string;
   candidateEmail: string;
   status: ApplicationStatus;
+  rejectionReason: string | null;
+  rejectedFromStage: ApplicationStatus | null;
   appliedAt: string;
 }
 
@@ -38,6 +72,12 @@ export const getMyApplications = () =>
 export const getApplicants = (jobId: number) =>
   api.get<ApplicantResponse[]>(`/jobs/${jobId}/applicants`).then((r) => r.data);
 
-// employer updates an application's status
-export const updateApplicationStatus = (applicationId: number, status: ApplicationStatus) =>
-  api.patch<ApplicationResponse>(`/applications/${applicationId}/status`, { status }).then((r) => r.data);
+// employer updates an application's status (reason only for REJECTED)
+export const updateApplicationStatus = (
+  applicationId: number,
+  status: ApplicationStatus,
+  reason?: string
+) =>
+  api
+    .patch<ApplicationResponse>(`/applications/${applicationId}/status`, { status, reason })
+    .then((r) => r.data);

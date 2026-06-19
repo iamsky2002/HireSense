@@ -4,6 +4,8 @@ import { Role } from "../api/auth";
 // nav links are filtered by role
 const NavLinks = ({ role }: { role?: Role }) => {
   const allLinks = [
+    { name: "Dashboard", url: "/dashboard", roles: ["CANDIDATE", "ADMIN"] as Role[] },
+    { name: "Dashboard", url: "/employer-dashboard", roles: ["EMPLOYER"] as Role[] },
     { name: "Find Jobs", url: "/find-jobs", roles: ["CANDIDATE", "ADMIN"] as Role[], showLoggedOut: true },
     { name: "Find Talent", url: "/find-talent", roles: ["EMPLOYER", "ADMIN"] as Role[], showLoggedOut: true },
     { name: "Post Job", url: "/post-job", roles: ["EMPLOYER", "ADMIN"] as Role[] },

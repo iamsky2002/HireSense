@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import { Tabs, Button } from "@mantine/core";
 import { Link } from "react-router-dom";
-import { getMyApplications, ApplicationResponse, ApplicationStatus } from "../api/applications";
+import { getMyApplications, ApplicationResponse, ApplicationStatus, statusLabel } from "../api/applications";
 import { jobTypeLabel, daysAgo } from "../FindJobs/jobMappers";
 
 // badge color per status
 const statusColors: Record<ApplicationStatus, string> = {
   APPLIED: "text-bright-sun-400",
+  UNDER_REVIEW: "text-cyan-400",
   SHORTLISTED: "text-blue-400",
-  REJECTED: "text-red-400",
+  ASSESSMENT: "text-violet-400",
+  INTERVIEW: "text-indigo-400",
+  OFFERED: "text-emerald-400",
   HIRED: "text-green-400",
+  REJECTED: "text-red-400",
 };
 
 // one application card (with status badge)
@@ -27,7 +31,7 @@ const ApplicationCard = ({ app }: { app: ApplicationResponse }) => (
         </span>
       )}
       <span className={`py-1 px-2 bg-mine-shaft-800 rounded-lg font-semibold ${statusColors[app.status]}`}>
-        {app.status}
+        {statusLabel[app.status]}
       </span>
     </div>
     <div className="text-xs text-mine-shaft-400">Applied {daysAgo(app.appliedAt)} days ago</div>
