@@ -1,8 +1,13 @@
-import { IconBookmark, IconClockHour3 } from "@tabler/icons-react";
+import { IconBookmark, IconBookmarkFilled, IconClockHour3 } from "@tabler/icons-react";
 import { Text, Divider, Button } from "@mantine/core";
 import { Link } from "react-router-dom";
+import { useSavedJobs } from "../SavedJobs/SavedJobsContext";
 
 const JobCard = (props: any) => {
+  const { isSaved, toggleSave, canSave } = useSavedJobs();
+  const saved = isSaved(props.id);
+  const BookmarkIcon = saved ? IconBookmarkFilled : IconBookmark;
+
   return (
     <div className="bg-mine-shaft-900 p-4 w-72 rounded-xl border border-mine-shaft-700 flex flex-col gap-3 hover:shadow-[0_0_5px_1px_yellow] !shadow-bright-sun-300 hover:border-bright-sun-400 transition-all duration-300 cursor-pointer">
 
@@ -29,7 +34,18 @@ const JobCard = (props: any) => {
             </div>
           </div>
         </div>
-        <IconBookmark className="text-mine-shaft-300 cursor-pointer hover:text-bright-sun-400 transition-colors shrink-0 mt-1" />
+        {canSave && (
+          <BookmarkIcon
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleSave(props.id);
+            }}
+            className={`shrink-0 mt-1 cursor-pointer transition-colors ${
+              saved ? "text-bright-sun-400" : "text-mine-shaft-300 hover:text-bright-sun-400"
+            }`}
+          />
+        )}
       </div>
 
       <Text className="!text-xs text-justify !text-mine-shaft-300" lineClamp={3}>

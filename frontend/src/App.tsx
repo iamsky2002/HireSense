@@ -18,6 +18,7 @@ import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthContext";
+import { SavedJobsProvider } from "./SavedJobs/SavedJobsContext";
 import ProtectedRoute from "./auth/ProtectedRoute";
 
 // Layout decides when to show the Header/Footer (auth pages stay clean)
@@ -118,7 +119,9 @@ function App() {
     <MantineProvider defaultColorScheme="dark" theme={theme}>
       <BrowserRouter>
         <AuthProvider>
-          <AppLayout />
+          <SavedJobsProvider>
+            <AppLayout />
+          </SavedJobsProvider>
         </AuthProvider>
       </BrowserRouter>
     </MantineProvider>

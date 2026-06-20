@@ -7,6 +7,7 @@ import DashboardStats from "../Dashboard/DashboardStats";
 import ProfileCompleteness from "../Dashboard/ProfileCompleteness";
 import ApplicationTracker from "../Dashboard/ApplicationTracker";
 import RecommendedJobs from "../Dashboard/RecommendedJobs";
+import SavedJobsSection from "../Dashboard/SavedJobsSection";
 
 // rule-based skill-overlap for now; Phase 4 will swap this for AI embeddings
 const rankBySkillOverlap = (
@@ -86,6 +87,7 @@ const DashboardPage = () => {
         <div className="lg:col-span-2 flex flex-col gap-8">
           <ApplicationTracker apps={apps} />
           <RecommendedJobs jobs={recommended} matchedBySkill={matchedBySkill} />
+          <SavedJobsSection />
         </div>
         <div className="lg:col-span-1">
           <ProfileCompleteness profile={profile} />
