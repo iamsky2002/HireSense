@@ -11,6 +11,7 @@ import JobDescPage from "./Pages/JobDescPage";
 import JobHistoryPage from "./Pages/JobHistoryPage";
 import DashboardPage from "./Pages/DashboardPage";
 import EmployerDashboardPage from "./Pages/EmployerDashboardPage";
+import AdminDashboardPage from "./Pages/AdminDashboardPage";
 import PostedJobsPage from "./Pages/PostedJobsPage";
 import MyProfilePage from "./Pages/MyProfilePage";
 import LoginPage from "./Pages/LoginPage";
@@ -37,6 +38,7 @@ function AppLayout() {
         <Routes>
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/employer-dashboard" element={<ProtectedRoute><EmployerDashboardPage /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
           <Route path="/find-jobs" element={<FindJobsPage />} />
           <Route path="/find-talent" element={<FindTalentPage />} />
           <Route path="/talent-profile/:id" element={<ProtectedRoute><TalentProfilePage /></ProtectedRoute>} />

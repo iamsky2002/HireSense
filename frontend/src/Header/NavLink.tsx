@@ -4,14 +4,15 @@ import { Role } from "../api/auth";
 // nav links are filtered by role
 const NavLinks = ({ role }: { role?: Role }) => {
   const allLinks = [
-    { name: "Dashboard", url: "/dashboard", roles: ["CANDIDATE", "ADMIN"] as Role[] },
+    { name: "Dashboard", url: "/dashboard", roles: ["CANDIDATE"] as Role[] },
     { name: "Dashboard", url: "/employer-dashboard", roles: ["EMPLOYER"] as Role[] },
+    { name: "Dashboard", url: "/admin", roles: ["ADMIN"] as Role[] },
     { name: "Find Jobs", url: "/find-jobs", roles: ["CANDIDATE", "ADMIN"] as Role[], showLoggedOut: true },
     { name: "Find Talent", url: "/find-talent", roles: ["EMPLOYER", "ADMIN"] as Role[], showLoggedOut: true },
-    { name: "Post Job", url: "/post-job", roles: ["EMPLOYER", "ADMIN"] as Role[] },
-    { name: "Posted Jobs", url: "/posted-jobs", roles: ["EMPLOYER", "ADMIN"] as Role[] },
-    { name: "Job History", url: "/job-history", roles: ["CANDIDATE", "ADMIN"] as Role[] },
-    { name: "My Profile", url: "/my-profile", roles: ["CANDIDATE", "ADMIN"] as Role[] },
+    { name: "Post Job", url: "/post-job", roles: ["EMPLOYER"] as Role[] },
+    { name: "Posted Jobs", url: "/posted-jobs", roles: ["EMPLOYER"] as Role[] },
+    { name: "Job History", url: "/job-history", roles: ["CANDIDATE"] as Role[] },
+    { name: "My Profile", url: "/my-profile", roles: ["CANDIDATE"] as Role[] },
   ];
 
   // logged in: links for the role; logged out: only the browse ones

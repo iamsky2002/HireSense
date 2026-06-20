@@ -27,7 +27,9 @@ const LoginPage = () => {
     try {
       const user = await login(email, password);
       // redirect based on role
-      navigate(user.role === "EMPLOYER" ? "/employer-dashboard" : "/dashboard");
+      navigate(
+        user.role === "EMPLOYER" ? "/employer-dashboard" : user.role === "ADMIN" ? "/admin" : "/dashboard"
+      );
     } catch (err) {
       setServerError("Invalid email or password");
     } finally {
@@ -45,7 +47,9 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const user = await login(demoEmail, demoPassword);
-      navigate(user.role === "EMPLOYER" ? "/employer-dashboard" : "/dashboard");
+      navigate(
+        user.role === "EMPLOYER" ? "/employer-dashboard" : user.role === "ADMIN" ? "/admin" : "/dashboard"
+      );
     } catch (err) {
       setServerError("Demo login failed - is the backend running?");
     } finally {
