@@ -58,6 +58,11 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
+        // an admin can deactivate an account; a disabled user can no longer log in
+        if (!user.isEnabled()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "This account has been disabled");
+        }
+
         String token = jwtUtil.generateToken(user);
         return toResponse(user, token);
     }
