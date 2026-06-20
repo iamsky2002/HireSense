@@ -114,8 +114,8 @@ public class JobService {
                                 .build()));
     }
 
-    // map entity to DTO (only safe, flat fields)
-    private JobResponse toResponse(Job job) {
+    // map entity to DTO (only safe, flat fields) — public so SavedJobService can reuse it
+    public JobResponse toResponse(Job job) {
         return JobResponse.builder()
                 .id(job.getId())
                 .title(job.getTitle())
