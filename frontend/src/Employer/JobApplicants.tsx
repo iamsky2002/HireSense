@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Select, Modal, Textarea } from "@mantine/core";
 import { Link } from "react-router-dom";
-import { IconClockHour3, IconMapPin, IconUsers, IconExternalLink } from "@tabler/icons-react";
+import { IconClockHour3, IconMapPin, IconUsers, IconExternalLink, IconPencil } from "@tabler/icons-react";
 import { JobResponse } from "../api/jobs";
 import {
   ApplicantResponse,
@@ -83,16 +83,22 @@ const JobApplicants = ({
         </span>
       </div>
 
-      <Button
-        size="xs"
-        color="brightSun.4"
-        variant="light"
-        className="w-fit"
-        onClick={() => setOpen((o) => !o)}
-        disabled={applicants.length === 0}
-      >
-        {applicants.length === 0 ? "No applicants yet" : open ? "Hide applicants" : "View applicants"}
-      </Button>
+      <div className="flex gap-2 items-center">
+        <Button
+          size="xs"
+          color="brightSun.4"
+          variant="light"
+          onClick={() => setOpen((o) => !o)}
+          disabled={applicants.length === 0}
+        >
+          {applicants.length === 0 ? "No applicants yet" : open ? "Hide applicants" : "View applicants"}
+        </Button>
+        <Link to={`/edit-job/${job.id}`}>
+          <Button size="xs" variant="subtle" color="brightSun.4" leftSection={<IconPencil size={14} />}>
+            Edit job
+          </Button>
+        </Link>
+      </div>
 
       {error && <div className="text-xs text-red-400">{error}</div>}
 

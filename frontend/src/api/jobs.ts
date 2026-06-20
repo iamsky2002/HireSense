@@ -69,6 +69,10 @@ export const getJob = (id: number) =>
 export const createJob = (data: CreateJobRequest) =>
   api.post<JobResponse>("/jobs", data).then((r) => r.data);
 
+// edit an existing job (EMPLOYER + owner only)
+export const updateJob = (id: number, data: CreateJobRequest) =>
+  api.put<JobResponse>(`/jobs/${id}`, data).then((r) => r.data);
+
 // the logged-in employer's own posted jobs
 export const getMyJobs = () =>
   api.get<JobResponse[]>("/jobs/mine").then((r) => r.data);

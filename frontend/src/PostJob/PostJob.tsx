@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput, Select, NumberInput, Textarea, TagsInput, Button, Grid } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 import { fields } from "../Data/PostJob";
-import { createJob, EmploymentType } from "../api/jobs";
+import { createJob, updateJob, getJob, EmploymentType } from "../api/jobs";
 
 // friendly Job Type labels; value matches the backend EmploymentType enum
 const jobTypeOptions = [
@@ -12,8 +13,11 @@ const jobTypeOptions = [
   { value: "TEMPORARY", label: "Temporary" },
 ];
 
-// form for posting a new job (connected to the real API)
-const PostJob = () => {
+// post a new job, or edit an existing one when jobId is passed
+const PostJob = ({ jobId }: { jobId?: number }) => {
+  const isEdit = jobId != null;
+  const navigate = useNavigate();
+
   const [jobTitle, setJobTitle] = useState("");
   const [experience, setExperience] = useState("");
   const [jobType, setJobType] = useState("");
@@ -26,7 +30,24 @@ const PostJob = () => {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
 
-  const handlePost = async () => {
+  // edit mode: load the job and pre-fill the form
+  useEffect(() => {
+    if (jobId == null) return;
+    getJob(jobId)
+      .then((job) => {
+        setJobTitle(job.title);
+        setExperience(job.experience || "");
+        setJobType(job.type || "");
+        setLocation(job.location || "");
+        setSalaryMin(job.salaryMin ?? "");
+        setSalaryMax(job.salaryMax ?? "");
+        setSkills(job.skills);
+        setJobDescription(job.description);
+      })
+      .catch(() => setMessage({ ok: false, text: "Couldn't load this job." }));
+  }, [jobId]);
+
+  const handleSubmit = async () => {
     setMessage(null);
 
     // backend requires title, description and type, so check them here first
@@ -35,36 +56,41 @@ const PostJob = () => {
       return;
     }
 
+    const payload = {
+      title: jobTitle.trim(),
+      description: jobDescription.trim(),
+      location: location || undefined,
+      experience: experience || undefined,
+      type: jobType as EmploymentType,
+      salaryMin: salaryMin === "" ? undefined : Number(salaryMin),
+      salaryMax: salaryMax === "" ? undefined : Number(salaryMax),
+      skills,
+    };
+
     try {
       setSubmitting(true);
-      const created = await createJob({
-        title: jobTitle.trim(),
-        description: jobDescription.trim(),
-        location: location || undefined,
-        experience: experience || undefined,
-        type: jobType as EmploymentType,
-        salaryMin: salaryMin === "" ? undefined : Number(salaryMin),
-        salaryMax: salaryMax === "" ? undefined : Number(salaryMax),
-        skills,
-      });
-
-      setMessage({ ok: true, text: `Job posted successfully! (id: ${created.id})` });
-
-      // clear the form after a successful post
-      setJobTitle("");
-      setExperience("");
-      setJobType("");
-      setLocation("");
-      setSalaryMin("");
-      setSalaryMax("");
-      setSkills([]);
-      setJobDescription("");
+      if (isEdit) {
+        await updateJob(jobId, payload);
+        navigate("/posted-jobs");
+      } else {
+        const created = await createJob(payload);
+        setMessage({ ok: true, text: `Job posted successfully! (id: ${created.id})` });
+        // clear the form after a successful post
+        setJobTitle("");
+        setExperience("");
+        setJobType("");
+        setLocation("");
+        setSalaryMin("");
+        setSalaryMax("");
+        setSkills([]);
+        setJobDescription("");
+      }
     } catch (err) {
-      // 403 = candidate (only employers can post), otherwise a generic error
+      // 403 = candidate / not the owner, otherwise a generic error
       const status = (err as any)?.response?.status;
       const text =
         status === 403
-          ? "Only employers can post a job."
+          ? "You can only manage your own jobs."
           : "Something went wrong. Please try again.";
       setMessage({ ok: false, text });
     } finally {
@@ -74,7 +100,9 @@ const PostJob = () => {
 
   return (
     <div className="w-4/5 mx-auto mt-5 p-6 bg-mine-shaft-900 border border-mine-shaft-800 rounded-2xl">
-      <div className="text-2xl font-bold text-mine-shaft-100 mb-6">Post a Job</div>
+      <div className="text-2xl font-bold text-mine-shaft-100 mb-6">
+        {isEdit ? "Edit Job" : "Post a Job"}
+      </div>
       <Grid>
 
         <Grid.Col span={{ base: 12, md: 6 }}>
@@ -164,12 +192,9 @@ const PostJob = () => {
           </Grid.Col>
         )}
 
-        <Grid.Col span={12} className="flex gap-4 mt-4">
-          <Button color="bright-sun.4" onClick={handlePost} loading={submitting}>
-            Post Job
-          </Button>
-          <Button variant="outline" color="bright-sun.4">
-            Save Draft
+        <Grid.Col span={12} className="mt-4">
+          <Button color="bright-sun.4" onClick={handleSubmit} loading={submitting}>
+            {isEdit ? "Update Job" : "Post Job"}
           </Button>
         </Grid.Col>
 

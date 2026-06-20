@@ -6,6 +6,7 @@ import FindJobsPage from "./Pages/FindJobsPage";
 import FindTalentPage from "./Pages/FindTalentPage";
 import TalentProfilePage from "./Pages/TalentProfilePage";
 import PostJobPage from "./Pages/PostJobPage";
+import EditJobPage from "./Pages/EditJobPage";
 import JobDescPage from "./Pages/JobDescPage";
 import JobHistoryPage from "./Pages/JobHistoryPage";
 import DashboardPage from "./Pages/DashboardPage";
@@ -40,6 +41,7 @@ function AppLayout() {
           <Route path="/find-talent" element={<FindTalentPage />} />
           <Route path="/talent-profile/:id" element={<ProtectedRoute><TalentProfilePage /></ProtectedRoute>} />
           <Route path="/post-job" element={<ProtectedRoute><PostJobPage /></ProtectedRoute>} />
+          <Route path="/edit-job/:id" element={<ProtectedRoute><EditJobPage /></ProtectedRoute>} />
           <Route path="/jobs/:id" element={<JobDescPage />} />
           <Route path="/job-history" element={<ProtectedRoute><JobHistoryPage /></ProtectedRoute>} />
           <Route path="/posted-jobs" element={<ProtectedRoute><PostedJobsPage /></ProtectedRoute>} />
