@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Table, Switch, Badge } from "@mantine/core";
-import { IconUsers, IconUser, IconBuilding, IconBriefcase, IconFileText } from "@tabler/icons-react";
+import { Table, Switch, Badge, TextInput, Select } from "@mantine/core";
+import { IconUsers, IconUser, IconBuilding, IconBriefcase, IconFileText, IconSearch } from "@tabler/icons-react";
 import { useAuth } from "../auth/AuthContext";
 import { Role } from "../api/auth";
 import { getAdminStats, getAdminUsers, setUserEnabled, AdminStats, AdminUser } from "../api/admin";
@@ -16,6 +16,8 @@ const AdminDashboardPage = () => {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("ALL");
 
   useEffect(() => {
     let active = true;
@@ -55,6 +57,13 @@ const AdminDashboardPage = () => {
       ]
     : [];
 
+  const q = search.trim().toLowerCase();
+  const filteredUsers = users.filter(
+    (u) =>
+      (roleFilter === "ALL" || u.role === roleFilter) &&
+      (q === "" || u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+  );
+
   return (
     <div className="p-4 md:p-8 min-h-[90vh] flex flex-col gap-6">
       <div>
@@ -85,7 +94,35 @@ const AdminDashboardPage = () => {
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="text-lg font-semibold text-mine-shaft-100">Users ({users.length})</div>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="text-lg font-semibold text-mine-shaft-100">
+            Users ({filteredUsers.length}
+            {filteredUsers.length !== users.length ? ` of ${users.length}` : ""})
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <TextInput
+              size="xs"
+              placeholder="Search name or email"
+              leftSection={<IconSearch size={14} />}
+              value={search}
+              onChange={(e) => setSearch(e.currentTarget.value)}
+              className="w-56"
+            />
+            <Select
+              size="xs"
+              data={[
+                { value: "ALL", label: "All roles" },
+                { value: "CANDIDATE", label: "Candidates" },
+                { value: "EMPLOYER", label: "Employers" },
+                { value: "ADMIN", label: "Admins" },
+              ]}
+              value={roleFilter}
+              onChange={(val) => setRoleFilter(val || "ALL")}
+              allowDeselect={false}
+              className="w-36"
+            />
+          </div>
+        </div>
         <div className="bg-mine-shaft-900 border border-mine-shaft-700 rounded-xl overflow-x-auto">
           <Table verticalSpacing="sm" highlightOnHover>
             <Table.Thead>
@@ -98,7 +135,7 @@ const AdminDashboardPage = () => {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {users.map((u) => (
+              {filteredUsers.map((u) => (
                 <Table.Tr key={u.id}>
                   <Table.Td className="text-mine-shaft-100">{u.fullName}</Table.Td>
                   <Table.Td className="text-mine-shaft-300">{u.email}</Table.Td>
@@ -126,6 +163,9 @@ const AdminDashboardPage = () => {
               ))}
             </Table.Tbody>
           </Table>
+          {filteredUsers.length === 0 && (
+            <div className="p-6 text-center text-mine-shaft-400 text-sm">No users match your search.</div>
+          )}
         </div>
       </div>
     </div>
