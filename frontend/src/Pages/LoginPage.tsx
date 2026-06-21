@@ -25,7 +25,7 @@ const LoginPage = () => {
     setServerError("");
     setLoading(true);
     try {
-      const user = await login(email, password);
+      const user = await login(email.trim(), password);
       // redirect based on role
       navigate(
         user.role === "EMPLOYER" ? "/employer-dashboard" : user.role === "ADMIN" ? "/admin" : "/dashboard"
@@ -101,11 +101,11 @@ const LoginPage = () => {
             <div className="text-xs text-center text-mine-shaft-400 mb-3">
               Quick demo login (for reviewers, no signup needed)
             </div>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <Button
                 variant="light"
                 color="brightSun.4"
-                className="grow"
+                size="sm"
                 onClick={() => demoLogin("ravi@test.com", "secret123")}
               >
                 Candidate
@@ -113,10 +113,18 @@ const LoginPage = () => {
               <Button
                 variant="light"
                 color="brightSun.4"
-                className="grow"
+                size="sm"
                 onClick={() => demoLogin("test@example.com", "secret123")}
               >
                 Employer
+              </Button>
+              <Button
+                variant="light"
+                color="brightSun.4"
+                size="sm"
+                onClick={() => demoLogin("admin@hiresense.com", "secret123")}
+              >
+                Admin
               </Button>
             </div>
             <div className="text-[11px] text-center text-mine-shaft-500 mt-2">
