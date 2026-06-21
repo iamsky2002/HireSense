@@ -12,6 +12,7 @@ import {
 import { getJob, searchJobs, JobResponse } from "../api/jobs";
 import { applyToJob } from "../api/applications";
 import { jobTypeLabel, daysAgo, salaryText, toCardProps } from "../FindJobs/jobMappers";
+import { parseSections } from "../Data/jobSections";
 import JobCard from "../FindJobs/JobCard";
 
 const JobDescPage = () => {
@@ -177,11 +178,8 @@ const JobDescPage = () => {
 
           <Divider color="mine-shaft.7" />
 
-          {/* About the job */}
-          <div>
-            <div className="text-lg font-semibold text-mine-shaft-100 mb-2">About The Job</div>
-            <p className="text-mine-shaft-300 text-justify whitespace-pre-line">{job.description}</p>
-          </div>
+          {/* Description — structured sections when present, else one "About" block */}
+          <JobDescriptionSections description={job.description} />
         </div>
 
         {/* Right: recommended jobs */}
@@ -192,6 +190,22 @@ const JobDescPage = () => {
           ))}
         </aside>
       </div>
+    </div>
+  );
+};
+
+// renders the description as sections (About / Responsibilities / Qualifications),
+// falling back to a single "About The Job" block for older plain descriptions
+const JobDescriptionSections = ({ description }: { description: string }) => {
+  const sections = parseSections(description) || [{ title: "About The Job", body: description }];
+  return (
+    <div className="flex flex-col gap-6">
+      {sections.map((s) => (
+        <div key={s.title}>
+          <div className="text-lg font-semibold text-mine-shaft-100 mb-2">{s.title}</div>
+          <p className="text-mine-shaft-300 text-justify whitespace-pre-line">{s.body}</p>
+        </div>
+      ))}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { TextInput, Select, NumberInput, Textarea, TagsInput, Button, Grid } fro
 import { useNavigate } from "react-router-dom";
 import { fields } from "../Data/PostJob";
 import { createJob, updateJob, getJob, EmploymentType } from "../api/jobs";
+import { combineSections, descriptionToSections } from "../Data/jobSections";
 
 // friendly Job Type labels; value matches the backend EmploymentType enum
 const jobTypeOptions = [
@@ -25,7 +26,10 @@ const PostJob = ({ jobId }: { jobId?: number }) => {
   const [salaryMin, setSalaryMin] = useState<number | string>("");
   const [salaryMax, setSalaryMax] = useState<number | string>("");
   const [skills, setSkills] = useState<string[]>([]);
-  const [jobDescription, setJobDescription] = useState("");
+  // description is filled as three sections, joined into one string on submit
+  const [about, setAbout] = useState("");
+  const [responsibilities, setResponsibilities] = useState("");
+  const [qualifications, setQualifications] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
@@ -42,7 +46,10 @@ const PostJob = ({ jobId }: { jobId?: number }) => {
         setSalaryMin(job.salaryMin ?? "");
         setSalaryMax(job.salaryMax ?? "");
         setSkills(job.skills);
-        setJobDescription(job.description);
+        const secs = descriptionToSections(job.description);
+        setAbout(secs.about);
+        setResponsibilities(secs.responsibilities);
+        setQualifications(secs.qualifications);
       })
       .catch(() => setMessage({ ok: false, text: "Couldn't load this job." }));
   }, [jobId]);
@@ -51,14 +58,14 @@ const PostJob = ({ jobId }: { jobId?: number }) => {
     setMessage(null);
 
     // backend requires title, description and type, so check them here first
-    if (!jobTitle.trim() || !jobDescription.trim() || !jobType) {
-      setMessage({ ok: false, text: "Title, description and job type are required." });
+    if (!jobTitle.trim() || !about.trim() || !jobType) {
+      setMessage({ ok: false, text: "Title, About The Job and job type are required." });
       return;
     }
 
     const payload = {
       title: jobTitle.trim(),
-      description: jobDescription.trim(),
+      description: combineSections({ about, responsibilities, qualifications }),
       location: location || undefined,
       experience: experience || undefined,
       type: jobType as EmploymentType,
@@ -83,7 +90,9 @@ const PostJob = ({ jobId }: { jobId?: number }) => {
         setSalaryMin("");
         setSalaryMax("");
         setSkills([]);
-        setJobDescription("");
+        setAbout("");
+        setResponsibilities("");
+        setQualifications("");
       }
     } catch (err) {
       // 403 = candidate / not the owner, otherwise a generic error
@@ -176,11 +185,31 @@ const PostJob = ({ jobId }: { jobId?: number }) => {
 
         <Grid.Col span={12}>
           <Textarea
-            label="Job Description"
-            placeholder="Enter job details..."
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.currentTarget.value)}
-            rows={8}
+            label="About The Job"
+            placeholder="What the role is about, the team, the mission..."
+            value={about}
+            onChange={(e) => setAbout(e.currentTarget.value)}
+            rows={5}
+          />
+        </Grid.Col>
+
+        <Grid.Col span={12}>
+          <Textarea
+            label="Responsibilities"
+            placeholder="Day-to-day work, what they'll own (one per line)..."
+            value={responsibilities}
+            onChange={(e) => setResponsibilities(e.currentTarget.value)}
+            rows={5}
+          />
+        </Grid.Col>
+
+        <Grid.Col span={12}>
+          <Textarea
+            label="Qualifications & Skill Sets"
+            placeholder="Must-haves, nice-to-haves, experience..."
+            value={qualifications}
+            onChange={(e) => setQualifications(e.currentTarget.value)}
+            rows={5}
           />
         </Grid.Col>
 
