@@ -1,5 +1,6 @@
 package com.sky.hiresense.candidate;
 
+import com.sky.hiresense.ai.AiIndexService;
 import com.sky.hiresense.candidate.dto.CandidateSummaryResponse;
 import com.sky.hiresense.candidate.dto.ProfileResponse;
 import com.sky.hiresense.candidate.dto.UpdateProfileRequest;
@@ -31,13 +32,16 @@ public class ProfileService {
     private final CandidateProfileRepository profileRepository;
     private final UserRepository userRepository;
     private final SkillService skillService;
+    private final AiIndexService aiIndex;
 
     public ProfileService(CandidateProfileRepository profileRepository,
                           UserRepository userRepository,
-                          SkillService skillService) {
+                          SkillService skillService,
+                          AiIndexService aiIndex) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.skillService = skillService;
+        this.aiIndex = aiIndex;
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +58,9 @@ public class ProfileService {
         profile.setExperienceYears(req.getExperienceYears());
         profile.setExpectedCtc(req.getExpectedCtc());
         profile.setSkills(skillService.resolveSkills(req.getSkills()));
-        return toResponse(profileRepository.save(profile), candidate);
+        CandidateProfile saved = profileRepository.save(profile);
+        aiIndex.indexCandidate(saved);
+        return toResponse(saved, candidate);
     }
 
     @Transactional
@@ -124,8 +130,8 @@ public class ProfileService {
                 .build();
     }
 
-    // summary for Find Talent, no private data like email
-    private CandidateSummaryResponse toSummary(CandidateProfile profile) {
+    // summary for Find Talent, no private data like email; public so MatchService can reuse it
+    public CandidateSummaryResponse toSummary(CandidateProfile profile) {
         return CandidateSummaryResponse.builder()
                 .userId(profile.getUserId())
                 .fullName(profile.getUser().getFullName())

@@ -1,5 +1,6 @@
 package com.sky.hiresense.job;
 
+import com.sky.hiresense.ai.AiIndexService;
 import com.sky.hiresense.company.Company;
 import com.sky.hiresense.company.CompanyRepository;
 import com.sky.hiresense.job.dto.CreateJobRequest;
@@ -24,13 +25,16 @@ public class JobService {
     private final JobRepository jobRepository;
     private final CompanyRepository companyRepository;
     private final SkillService skillService;
+    private final AiIndexService aiIndex;
 
     public JobService(JobRepository jobRepository,
                       CompanyRepository companyRepository,
-                      SkillService skillService) {
+                      SkillService skillService,
+                      AiIndexService aiIndex) {
         this.jobRepository = jobRepository;
         this.companyRepository = companyRepository;
         this.skillService = skillService;
+        this.aiIndex = aiIndex;
     }
 
     // readOnly since it only reads
@@ -68,7 +72,9 @@ public class JobService {
                 .salaryMax(req.getSalaryMax())
                 .skills(skillService.resolveSkills(req.getSkills()))
                 .build();
-        return toResponse(jobRepository.save(job));
+        Job saved = jobRepository.save(job);
+        aiIndex.indexJob(saved);
+        return toResponse(saved);
     }
 
     @Transactional
@@ -85,7 +91,9 @@ public class JobService {
         job.setSalaryMin(req.getSalaryMin());
         job.setSalaryMax(req.getSalaryMax());
         job.setSkills(skillService.resolveSkills(req.getSkills()));
-        return toResponse(jobRepository.save(job));
+        Job saved = jobRepository.save(job);
+        aiIndex.indexJob(saved);
+        return toResponse(saved);
     }
 
     @Transactional
@@ -94,6 +102,7 @@ public class JobService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job not found"));
         ensureOwner(job, employer);
         jobRepository.delete(job);
+        aiIndex.removeJob(id);
     }
 
     // sirf EMPLOYER role hona kaafi nahi, job bhi usi ki honi chahiye warna 403
@@ -114,7 +123,7 @@ public class JobService {
                                 .build()));
     }
 
-    // map entity to DTO (only safe, flat fields) — public so SavedJobService can reuse it
+    // map entity to DTO, public so SavedJobService can reuse it
     public JobResponse toResponse(Job job) {
         return JobResponse.builder()
                 .id(job.getId())
