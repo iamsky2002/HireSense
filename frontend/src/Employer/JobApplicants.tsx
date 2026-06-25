@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Select, Modal, Textarea } from "@mantine/core";
 import { Link } from "react-router-dom";
-import { IconClockHour3, IconMapPin, IconUsers, IconExternalLink, IconPencil } from "@tabler/icons-react";
+import { IconClockHour3, IconMapPin, IconUsers, IconExternalLink, IconPencil, IconSparkles } from "@tabler/icons-react";
 import { JobResponse } from "../api/jobs";
 import {
   ApplicantResponse,
@@ -11,6 +11,8 @@ import {
   updateApplicationStatus,
 } from "../api/applications";
 import { jobTypeLabel, daysAgo } from "../FindJobs/jobMappers";
+import { getCandidateMatches } from "../api/matches";
+import { CandidateSummaryResponse } from "../api/candidates";
 
 // all stages + REJECTED in Select's {value,label} format
 const statusOptions = [...STATUS_FLOW, "REJECTED" as ApplicationStatus].map((s) => ({
@@ -32,6 +34,25 @@ const JobApplicants = ({
   // rejecting asks for a reason first, so we track the modal here
   const [reject, setReject] = useState<{ id: number; name: string } | null>(null);
   const [reason, setReason] = useState("");
+  // AI candidate matches, loaded only when the employer opens the section
+  const [matchOpen, setMatchOpen] = useState(false);
+  const [matches, setMatches] = useState<CandidateSummaryResponse[] | null>(null);
+  const [matchLoading, setMatchLoading] = useState(false);
+
+  const toggleMatches = async () => {
+    const next = !matchOpen;
+    setMatchOpen(next);
+    if (next && matches === null) {
+      setMatchLoading(true);
+      try {
+        setMatches(await getCandidateMatches(job.id));
+      } catch {
+        setMatches([]);
+      } finally {
+        setMatchLoading(false);
+      }
+    }
+  };
 
   const applyStatus = async (applicationId: number, status: ApplicationStatus, why?: string) => {
     setError("");
@@ -93,6 +114,15 @@ const JobApplicants = ({
         >
           {applicants.length === 0 ? "No applicants yet" : open ? "Hide applicants" : "View applicants"}
         </Button>
+        <Button
+          size="xs"
+          variant="subtle"
+          color="brightSun.4"
+          leftSection={<IconSparkles size={14} />}
+          onClick={toggleMatches}
+        >
+          {matchOpen ? "Hide top matches" : "Top matches"}
+        </Button>
         <Link to={`/edit-job/${job.id}`}>
           <Button size="xs" variant="subtle" color="brightSun.4" leftSection={<IconPencil size={14} />}>
             Edit job
@@ -131,6 +161,45 @@ const JobApplicants = ({
               />
             </div>
           ))}
+        </div>
+      )}
+
+      {matchOpen && (
+        <div className="mt-2 flex flex-col gap-2 border-t border-mine-shaft-800 pt-3">
+          <div className="text-xs text-mine-shaft-400">
+            Candidates ranked by how closely their profile fits this role (AI).
+          </div>
+          {matchLoading ? (
+            <div className="text-sm text-mine-shaft-400">Finding matches...</div>
+          ) : !matches || matches.length === 0 ? (
+            <div className="text-sm text-mine-shaft-400">
+              No matches yet. Matching runs once candidate profiles are indexed.
+            </div>
+          ) : (
+            matches.map((c) => (
+              <div
+                key={c.userId}
+                className="flex flex-wrap items-center justify-between gap-3 bg-mine-shaft-800 rounded-lg px-3 py-2"
+              >
+                <div>
+                  <div className="text-mine-shaft-100 text-sm font-medium">{c.fullName}</div>
+                  <div className="text-mine-shaft-400 text-xs">
+                    {c.headline || "No headline"}
+                    {c.experienceYears != null && ` • ${c.experienceYears} yrs`}
+                  </div>
+                  {c.skills.length > 0 && (
+                    <div className="text-mine-shaft-400 text-xs mt-0.5">{c.skills.join(", ")}</div>
+                  )}
+                </div>
+                <Link
+                  to={`/talent-profile/${c.userId}`}
+                  className="text-bright-sun-400 text-xs hover:underline inline-flex items-center gap-1"
+                >
+                  View profile <IconExternalLink size={12} />
+                </Link>
+              </div>
+            ))
+          )}
         </div>
       )}
 

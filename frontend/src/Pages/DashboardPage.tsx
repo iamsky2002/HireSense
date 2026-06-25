@@ -3,13 +3,14 @@ import { useAuth } from "../auth/AuthContext";
 import { getMyApplications, ApplicationResponse } from "../api/applications";
 import { getMyProfile, ProfileResponse } from "../api/profile";
 import { searchJobs, JobResponse } from "../api/jobs";
+import { getJobMatches } from "../api/matches";
 import DashboardStats from "../Dashboard/DashboardStats";
 import ProfileCompleteness from "../Dashboard/ProfileCompleteness";
 import ApplicationTracker from "../Dashboard/ApplicationTracker";
 import RecommendedJobs from "../Dashboard/RecommendedJobs";
 import SavedJobsSection from "../Dashboard/SavedJobsSection";
 
-// rule-based skill-overlap for now; Phase 4 will swap this for AI embeddings
+// fallback ranking when AI matches aren't available (no key, or nothing indexed yet)
 const rankBySkillOverlap = (
   jobs: JobResponse[],
   candidateSkills: string[],
@@ -37,6 +38,7 @@ const DashboardPage = () => {
   const [apps, setApps] = useState<ApplicationResponse[]>([]);
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
   const [jobs, setJobs] = useState<JobResponse[]>([]);
+  const [aiMatches, setAiMatches] = useState<JobResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,11 +50,13 @@ const DashboardPage = () => {
       searchJobs({ size: 50, sort: "postedAt,desc" })
         .then((p) => p.content)
         .catch(() => [] as JobResponse[]),
-    ]).then(([appsData, profileData, jobsData]) => {
+      getJobMatches().catch(() => [] as JobResponse[]),
+    ]).then(([appsData, profileData, jobsData, matchData]) => {
       if (!active) return;
       setApps(appsData);
       setProfile(profileData);
       setJobs(jobsData);
+      setAiMatches(matchData);
       setLoading(false);
     });
     return () => {
@@ -62,11 +66,13 @@ const DashboardPage = () => {
 
   const firstName = user?.fullName?.split(" ")[0] || "there";
   const appliedJobIds = new Set(apps.map((a) => a.jobId));
-  const { list: recommended, matchedBySkill } = rankBySkillOverlap(
-    jobs,
-    profile?.skills ?? [],
-    appliedJobIds
-  );
+
+  // prefer AI matches; fall back to skill-overlap when AI is off or returns nothing
+  const aiList = aiMatches.filter((j) => !appliedJobIds.has(j.id)).slice(0, 4);
+  const skillRank = rankBySkillOverlap(jobs, profile?.skills ?? [], appliedJobIds);
+  const useAi = aiList.length > 0;
+  const recommended = useAi ? aiList : skillRank.list;
+  const recommendSource = useAi ? "ai" : skillRank.matchedBySkill ? "skill" : "latest";
 
   if (loading) {
     return <div className="p-8 text-mine-shaft-300 min-h-[90vh]">Loading your dashboard...</div>;
@@ -86,7 +92,7 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 flex flex-col gap-8">
           <ApplicationTracker apps={apps} />
-          <RecommendedJobs jobs={recommended} matchedBySkill={matchedBySkill} />
+          <RecommendedJobs jobs={recommended} source={recommendSource} />
           <SavedJobsSection />
         </div>
         <div className="lg:col-span-1">
