@@ -20,14 +20,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-@EnableMethodSecurity  // enables @PreAuthorize on methods
+@EnableMethodSecurity
 public class SecurityConfig {
 
     // allowed frontend origins (comma-separated); defaults to local dev, override in prod
     @Value("${app.cors.allowed-origins:http://localhost:3000}")
     private List<String> allowedOrigins;
 
-    // BCrypt hashing for passwords
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -43,6 +42,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // public, no login needed
                 .requestMatchers("/api/auth/**", "/api/health", "/error").permitAll()
+                // swagger ui + the generated openapi spec are public so anyone can read the docs
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 // job list aur detail public hai; /* use kiya /** nahi, taki aage nested routes (jaise /api/jobs/5/applicants) by default protected rahein
                 .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*").permitAll()
                 // everything else needs a valid token
