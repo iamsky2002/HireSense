@@ -6,7 +6,6 @@ Full-stack recruitment platform built with React + Spring Boot. Candidates searc
 — use the Quick Demo Login (Candidate / Employer) on the login page to try it without signing up.
 Frontend on Vercel, backend (Dockerized Spring Boot + MySQL) on AWS EC2 with HTTPS via Caddy.
 
-Swagger UI live	✅ 200 → https://52-65-41-124.sslip.io/swagger-ui/index.html
 
 ## Why I built this
 
@@ -55,7 +54,9 @@ backend/    Spring Boot REST API
   └── common/        global exception handler, shared DTOs
 ```
 
-## API reference
+## API reference  
+
+Swagger UI live	✅ 200 → https://52-65-41-124.sslip.io/swagger-ui/index.html
 
 > **Interactive docs (Swagger UI):** once the backend is running, open **`/swagger-ui.html`** to browse every endpoint, see the schemas, and try calls live (the **Authorize** button takes a JWT). The OpenAPI spec is auto-generated at `/v3/api-docs`.
 
