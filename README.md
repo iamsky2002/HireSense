@@ -6,6 +6,8 @@ Full-stack recruitment platform built with React + Spring Boot. Candidates searc
 — use the Quick Demo Login (Candidate / Employer) on the login page to try it without signing up.
 Frontend on Vercel, backend (Dockerized Spring Boot + MySQL) on AWS EC2 with HTTPS via Caddy.
 
+Swagger UI live	✅ 200 → https://52-65-41-124.sslip.io/swagger-ui/index.html
+
 ## Why I built this
 
 I wanted one project where I could explain every technical decision in an interview — not a tutorial follow-along, but something I actually designed and debugged myself. Recruitment was a good fit because it has enough complexity: auth with multiple roles, ownership-based access control, search with filters and pagination, file uploads, a real deployment pipeline, and a natural use case for AI (matching resumes to jobs by meaning, not just keywords).
