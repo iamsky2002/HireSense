@@ -13,7 +13,7 @@ public class AiIndexService {
     private static final Logger log = LoggerFactory.getLogger(AiIndexService.class);
     public static final String JOBS = "jobs";
     public static final String CANDIDATES = "candidates";
-    private static final int VECTOR_SIZE = 768; // text-embedding-004
+    private static final int VECTOR_SIZE = 768; // gemini-embedding-001 output dims
 
     private final GeminiEmbeddingClient gemini;
     private final QdrantClient qdrant;

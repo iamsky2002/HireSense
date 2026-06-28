@@ -17,7 +17,7 @@ public class GeminiEmbeddingClient {
     private final RestClient rest = RestClient.create();
 
     public GeminiEmbeddingClient(@Value("${app.gemini.api-key:}") String apiKey,
-                                 @Value("${app.gemini.embedding-model:text-embedding-004}") String model) {
+                                 @Value("${app.gemini.embedding-model:gemini-embedding-001}") String model) {
         this.apiKey = apiKey;
         this.model = model;
     }
@@ -32,7 +32,8 @@ public class GeminiEmbeddingClient {
                 + model + ":embedContent?key=" + apiKey;
         Map<String, Object> body = Map.of(
                 "model", "models/" + model,
-                "content", Map.of("parts", List.of(Map.of("text", text)))
+                "content", Map.of("parts", List.of(Map.of("text", text))),
+                "outputDimensionality", 768  // keep it 768 so it fits the qdrant collection
         );
 
         Map<String, Object> resp = rest.post().uri(url)
