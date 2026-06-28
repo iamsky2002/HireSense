@@ -73,7 +73,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Swagger / OpenAPI: auto-generates the API spec + interactive UI at /swagger-ui.html -->
+		<!-- springdoc: swagger ui + openapi docs -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>

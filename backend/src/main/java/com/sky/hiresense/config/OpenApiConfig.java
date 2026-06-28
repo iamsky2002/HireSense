@@ -13,7 +13,7 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI hireSenseOpenApi() {
-        // a bearer-jwt scheme so the Swagger UI "Authorize" button sends our token on protected calls
+        // so Swagger UI's Authorize button can send the JWT
         SecurityScheme jwtScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
