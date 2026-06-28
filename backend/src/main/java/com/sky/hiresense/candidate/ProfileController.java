@@ -38,7 +38,6 @@ public class ProfileController {
         return profileService.updateProfile(candidate, req);
     }
 
-    // upload a PDF resume (multipart, 'file' key)
     @PostMapping("/resume")
     @PreAuthorize("hasRole('CANDIDATE')")
     public ProfileResponse uploadResume(@RequestParam("file") MultipartFile file,

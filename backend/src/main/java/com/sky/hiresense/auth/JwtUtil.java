@@ -19,7 +19,7 @@ public class JwtUtil {
 
     public JwtUtil(@Value("${app.jwt.secret}") String secret,
                    @Value("${app.jwt.expiration-ms}") long expirationMs) {
-        // HS256 signing key, secret must be at least 32 chars
+        // secret must be 32+ chars or jjwt rejects the HMAC key
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationMs = expirationMs;
     }

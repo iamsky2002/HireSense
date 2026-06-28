@@ -35,7 +35,6 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already registered");
         }
 
-        // store the BCrypt hash, never the raw password
         User user = User.builder()
                 .fullName(req.getFullName())
                 .email(req.getEmail())
@@ -45,7 +44,6 @@ public class AuthService {
 
         User saved = userRepository.save(user);
 
-        // no token here, user has to log in to get one
         return toResponse(saved, null);
     }
 

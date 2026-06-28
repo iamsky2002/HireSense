@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-// Saved (bookmarked) jobs — CANDIDATE only
+// Saved (bookmarked) jobs, candidate only
 @RestController
 @RequestMapping("/api")
 public class SavedJobController {

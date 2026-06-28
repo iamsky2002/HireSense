@@ -6,6 +6,5 @@ import java.util.Optional;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
-    // IgnoreCase so "java" and "Java" count as the same skill
     Optional<Skill> findByNameIgnoreCase(String name);
 }
