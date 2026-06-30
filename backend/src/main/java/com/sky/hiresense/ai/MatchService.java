@@ -59,6 +59,18 @@ public class MatchService {
     }
 
     @Transactional(readOnly = true)
+    public List<JobResponse> searchJobs(String query) {
+        if (!gemini.isEnabled() || query == null || query.isBlank()) return List.of();
+
+        float[] vec = gemini.embed(query);
+        List<Long> ids = qdrant.search(AiIndexService.JOBS, vec, LIMIT);
+
+        Map<Long, Job> byId = jobRepository.findAllById(ids).stream()
+                .collect(Collectors.toMap(Job::getId, Function.identity()));
+        return ordered(ids, byId, jobService::toResponse);
+    }
+
+    @Transactional(readOnly = true)
     public List<CandidateSummaryResponse> candidatesForJob(Long jobId, User employer) {
         if (!gemini.isEnabled()) return List.of();
         Job job = jobRepository.findById(jobId)

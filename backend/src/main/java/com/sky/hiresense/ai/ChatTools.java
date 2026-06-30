@@ -33,8 +33,11 @@ public class ChatTools {
         return switch (user.getRole()) {
             case CANDIDATE -> List.of(
                     ChatTool.noArg("recommended_jobs",
-                            "Jobs recommended for this candidate, ranked by AI fit.",
+                            "Jobs recommended for this candidate, ranked by AI fit to their profile.",
                             () -> jobsText(matchService.jobsForCandidate(user))),
+                    ChatTool.withQuery("search_jobs",
+                            "Search open jobs by a free-text query (skills, role, or keywords).",
+                            query -> jobsText(matchService.searchJobs(query))),
                     ChatTool.noArg("my_applications",
                             "This candidate's job applications and their current stage.",
                             () -> applicationsText(applicationService.myApplications(user)))

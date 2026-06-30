@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// calls Gemini's chat model, with tool/function-calling support
 @Component
 public class GeminiChatClient {
 
@@ -63,9 +62,11 @@ public class GeminiChatClient {
             contents.add(content);
             List<Map<String, Object>> responseParts = new ArrayList<>();
             for (Map<String, Object> p : calls) {
-                String name = (String) ((Map<String, Object>) p.get("functionCall")).get("name");
+                Map<String, Object> fc = (Map<String, Object>) p.get("functionCall");
+                String name = (String) fc.get("name");
+                Map<String, Object> args = (Map<String, Object>) fc.getOrDefault("args", Map.of());
                 responseParts.add(Map.of("functionResponse",
-                        Map.of("name", name, "response", Map.of("result", run(tools, name)))));
+                        Map.of("name", name, "response", Map.of("result", run(tools, name, args)))));
             }
             contents.add(Map.of("role", "user", "parts", responseParts));
         }
@@ -80,10 +81,10 @@ public class GeminiChatClient {
         return List.of(Map.of("function_declarations", decls));
     }
 
-    private String run(List<ChatTool> tools, String name) {
+    private String run(List<ChatTool> tools, String name, Map<String, Object> args) {
         return tools.stream()
                 .filter(t -> t.name().equals(name)).findFirst()
-                .map(t -> t.run().get())
+                .map(t -> t.run().apply(args))
                 .orElse("unknown tool");
     }
 }
