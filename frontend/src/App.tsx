@@ -19,13 +19,15 @@ import SignupPage from "./Pages/SignupPage";
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
-import { AuthProvider } from "./auth/AuthContext";
+import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { SavedJobsProvider } from "./SavedJobs/SavedJobsContext";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import ChatWidget from "./Chat/ChatWidget";
 
 // Layout decides when to show the Header/Footer (auth pages stay clean)
 function AppLayout() {
   const location = useLocation();
+  const { user } = useAuth();
   const hideChrome =
     location.pathname === "/login" || location.pathname === "/register";
 
@@ -55,6 +57,7 @@ function AppLayout() {
       </div>
 
       {!hideChrome && <Footer />}
+      {!hideChrome && user && <ChatWidget />}
     </div>
   );
 }
