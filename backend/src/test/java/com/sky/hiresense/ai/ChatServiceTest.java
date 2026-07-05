@@ -15,6 +15,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,6 +24,7 @@ class ChatServiceTest {
 
     @Mock private GeminiChatClient chat;
     @Mock private ChatTools chatTools;
+    @Mock private ChatMessageRepository messages;
 
     @InjectMocks private ChatService chatService;
 
@@ -43,5 +46,16 @@ class ChatServiceTest {
         when(chat.reply(anyString(), eq("hi"), anyList())).thenReturn("Hello Ravi!");
 
         assertThat(chatService.ask(user(), "hi")).isEqualTo("Hello Ravi!");
+    }
+
+    @Test
+    void ask_whenEnabled_persistsUserAndAssistantTurns() {
+        when(chat.isEnabled()).thenReturn(true);
+        when(chatTools.forUser(any())).thenReturn(List.of());
+        when(chat.reply(anyString(), eq("hi"), anyList())).thenReturn("Hello Ravi!");
+
+        chatService.ask(user(), "hi");
+
+        verify(messages, times(2)).save(any(ChatMessage.class));
     }
 }

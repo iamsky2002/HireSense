@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { IconMessageChatbot, IconX, IconSend } from "@tabler/icons-react";
-import { sendChat } from "../api/chat";
+import { sendChat, getChatHistory } from "../api/chat";
 
 type Msg = { from: "user" | "bot"; text: string };
 
@@ -16,6 +16,16 @@ const ChatWidget = () => {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(() => {
+    getChatHistory()
+      .then((items) => {
+        if (items.length) {
+          setMessages(items.map((it) => ({ from: it.sender === "USER" ? "user" : "bot", text: it.content })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const send = async () => {
     const text = input.trim();
