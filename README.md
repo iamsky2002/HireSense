@@ -1,6 +1,6 @@
 # HireSense
 
-Full-stack recruitment platform built with React + Spring Boot. Candidates search and apply for jobs, employers manage applicants through a 7-stage hiring pipeline, and an AI layer matches resumes to jobs using vector embeddings (semantic, not just keywords).
+Full-stack recruitment platform built with React + Spring Boot. Candidates search and apply for jobs, employers manage applicants through a 7-stage hiring pipeline, an AI layer matches resumes to jobs using vector embeddings (semantic, not just keywords), and a role-aware AI assistant answers questions from each user's real data.
 
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green)
@@ -12,7 +12,9 @@ Full-stack recruitment platform built with React + Spring Boot. Candidates searc
 ![Live](https://img.shields.io/badge/status-live-success)
 
 **Live:** [hire-sense-phi.vercel.app](https://hire-sense-phi.vercel.app) — Quick Demo Login (Candidate / Employer) on the login page lets you try it without signing up.
-**Interactive API docs (Swagger):** [/swagger-ui/index.html](https://52-65-41-124.sslip.io/swagger-ui/index.html)
+
+**API docs:** [Swagger UI](https://52-65-41-124.sslip.io/swagger-ui/index.html) (auto-generated, try-it-out with JWT)
+
 Frontend on Vercel · backend (Dockerized Spring Boot + MySQL + Qdrant) on AWS EC2 with HTTPS via Caddy.
 
 ## 📸 Screenshots
@@ -41,15 +43,17 @@ Frontend on Vercel · backend (Dockerized Spring Boot + MySQL + Qdrant) on AWS E
 
 ## Why I built this
 
-Recruitment platforms combine authentication, authorization, search, workflow management, document handling, and AI-based semantic matching — which makes them a good domain for building and exploring production-style full-stack systems. I wanted one project where every technical decision is something I designed and debugged myself, so I can actually defend it end to end rather than recite a tutorial.
+Recruitment is a surprisingly deep domain — it touches auth, RBAC, search, document handling, multi-stage workflows, and AI-based semantic matching, all in one system. I wanted a project where every technical decision is something I designed and debugged myself, so I can actually defend it end to end rather than recite a tutorial.
 
 ## What it does
 
-**Candidates** — search jobs with filters (title, location, type, salary), apply in one click, bookmark jobs, upload a PDF resume, track each application through the pipeline, and get AI-recommended jobs ranked by how well their profile fits.
+**Candidates** — search jobs with filters (title, location, type), apply in one click, bookmark jobs, upload a PDF resume, track each application through the pipeline, and get AI-recommended jobs ranked by how well their profile fits.
 
 **Employers** — post and edit jobs, review applicants, move them through a 7-stage pipeline (Applied → Under review → Shortlisted → Assessment → Interview → Offered → Hired), reject with a reason the candidate can see, and view AI-ranked candidate matches per job.
 
 **Admin** — platform stats and user management (disable actually blocks login at the auth layer, not just a flag).
+
+**AI assistant** — every logged-in user has an in-app chat assistant, scoped to their role, that answers from their real data (their jobs, applications, matches) instead of making things up. It can also search jobs semantically and remembers the conversation.
 
 **Security** — JWT auth, BCrypt passwords, role-based access on every endpoint (`@PreAuthorize`), plus **ownership checks** in the service layer (an employer can only touch their own jobs/applicants). The AI endpoints run through the same RBAC — no raw DB access.
 
@@ -58,8 +62,8 @@ Recruitment platforms combine authentication, authorization, search, workflow ma
 ```mermaid
 flowchart LR
     U["React + TypeScript<br/>(Vercel)"] -->|REST + JWT| API["Spring Boot API"]
-    API --> DB[("MySQL<br/>9 tables")]
-    API -->|embed text| G["Gemini API<br/>(embeddings)"]
+    API --> DB[("MySQL<br/>10 tables")]
+    API -->|"embed + chat"| G["Gemini API<br/>(embeddings + function-calling)"]
     API -->|vector search| Q[("Qdrant<br/>vector DB")]
 ```
 
@@ -83,13 +87,24 @@ The headline feature, in detail (this is the part that took the most thought):
 - **No score threshold / no hybrid search (yet)** — it's pure vector similarity, top-K. Keyword search exists separately (SQL `LIKE` with filters) but isn't fused with vectors yet.
 - **Graceful fallback** — if AI is off, the candidate dashboard falls back to a simple skill-overlap recommendation, so the page never looks broken.
 
+## 🗨️ How the AI assistant works
+
+The chat assistant isn't a generic LLM wrapper — it answers from the user's own data. It's built on **Gemini function-calling** (`gemini-flash-latest`):
+
+- **Role-scoped tools** — each role only gets the tools it's allowed to use. A candidate's assistant can pull their recommended jobs, list their applications, and run a job search; an employer's can list their own postings; an admin's can read platform stats. The other roles' tools aren't even declared to the model, so it can't call them.
+- **Tools go through the service layer** — a tool never touches the DB directly; it calls the same service methods the REST API uses, so RBAC and ownership checks still apply. Security by construction, not by prompt.
+- **RAG for open questions** — the `search_jobs` tool embeds the user's free-text query, runs a Qdrant vector search, and feeds the matching jobs back to the model to ground its answer (retrieve → augment → generate).
+- **Graceful + persisted** — with no Gemini key the assistant just says it's unavailable (the app never breaks). Each turn is saved, so reopening the chat shows the earlier conversation.
+
+One thing that bit me: newer Gemini models attach a `thought_signature` to a function call that has to be sent back verbatim on the next turn, or the API 400s. So the model's turn is re-added as-is instead of rebuilt by hand.
+
 ## Tech stack
 
 | Layer | Stack |
 |-------|-------|
 | Frontend | React 19, TypeScript, Tailwind CSS, Mantine UI, React Context |
 | Backend | Java 21, Spring Boot 3.5, Spring Security + JWT, JPA/Hibernate, MySQL 8.4 |
-| AI | Gemini `gemini-embedding-001` (REST, 768-dim), Qdrant vector DB, cosine similarity |
+| AI | Gemini `gemini-embedding-001` (embeddings, 768-dim) + `gemini-flash-latest` (chat, function-calling), Qdrant vector DB, cosine similarity |
 | API docs | springdoc-openapi (Swagger UI + OpenAPI 3 spec, auto-generated) |
 | DevOps | Docker, Docker Compose, AWS EC2, Caddy (reverse proxy + auto HTTPS), Vercel |
 | Testing | JUnit 5 + Mockito (service-layer unit tests) |
@@ -99,12 +114,12 @@ The headline feature, in detail (this is the part that took the most thought):
 | | |
 |---|---|
 | Java packages | 19 (feature-based) |
-| REST endpoints | 27 |
-| Database tables | 9 (7 entities + 2 join tables) |
+| REST endpoints | 29 |
+| Database tables | 10 (8 entities + 2 join tables) |
 | Roles | 3 (Candidate / Employer / Admin) |
 | Hiring stages | 7 (+ Rejected) |
-| Unit-test classes | 7 (JUnit 5 + Mockito) |
-| Docker containers | 4 (api, mysql, qdrant, caddy) |
+| Unit-test classes | 8 (JUnit 5 + Mockito) |
+| Docker containers | 3 (api, mysql, qdrant) |
 | Deployment targets | 2 (Vercel + AWS EC2) |
 | AI | Gemini embeddings + Qdrant vector DB |
 
@@ -122,14 +137,15 @@ backend/src/main/java/com/sky/hiresense/
 ├── skill/        Skill, SkillService, SkillRepository
 ├── savedjob/     SavedJob, SavedJobController, SavedJobService, SavedJobRepository
 ├── admin/        AdminController, AdminService, dto/
-├── ai/           GeminiEmbeddingClient, QdrantClient, EmbeddingText, AiIndexService, MatchService, MatchController
+├── ai/           matching:  GeminiEmbeddingClient, QdrantClient, EmbeddingText, AiIndexService, MatchService, MatchController
+│                 assistant: GeminiChatClient, ChatService, ChatController, ChatTool, ChatTools, ChatMessage, Sender, dto/
 ├── user/         User, Role, UserRepository, MeController
 ├── config/       SecurityConfig, OpenApiConfig
 ├── common/       exception/GlobalExceptionHandler
 └── controller/   HealthController
 
-backend/src/test/java/com/sky/hiresense/   AuthServiceTest, JwtUtilTest, JobServiceTest,
-                                           ApplicationServiceTest, ProfileServiceTest, SkillServiceTest, MatchServiceTest
+backend/src/test/java/com/sky/hiresense/   AuthServiceTest, JwtUtilTest, JobServiceTest, ApplicationServiceTest,
+                                           ProfileServiceTest, SkillServiceTest, MatchServiceTest, ChatServiceTest
 frontend/src/                              pages, components, api/ (axios layer), auth/ (AuthContext), ...
 ```
 
@@ -146,8 +162,9 @@ erDiagram
     USERS ||--o{ APPLICATIONS : submits
     JOBS ||--o{ SAVED_JOBS : "bookmarked in"
     USERS ||--o{ SAVED_JOBS : bookmarks
+    USERS ||--o{ CHAT_MESSAGES : chats
 ```
-*(Resume is stored as a URL + extracted text on `candidate_profile`, not a separate table.)*
+*(Resume is stored as a URL + extracted text on `candidate_profile`, not a separate table. `chat_messages` keeps the assistant conversation per user.)*
 
 ## Deployment
 
@@ -168,13 +185,14 @@ flowchart TD
 JUnit 5 + Mockito **unit tests on the service layer** (7 test classes) — they mock repositories and external clients, so they're fast and don't need a DB or network. Coverage focuses on the logic that's easy to get wrong:
 - RBAC / ownership checks, duplicate-apply → 409, admin can't disable themselves
 - AI match logic — graceful when AI is off, Qdrant ranking order preserved, missing ids dropped, non-owner → 403
+- Chat assistant — falls back when AI is off, and persists both sides of a successful exchange
 
 **Not yet (on the roadmap):** MockMvc / web-layer tests, integration tests with Testcontainers, and a Postman collection.
 
 ## API
 
 **Swagger UI** (auto-generated, try-it-out + JWT Authorize): [/swagger-ui/index.html](https://52-65-41-124.sslip.io/swagger-ui/index.html) · OpenAPI spec at `/v3/api-docs`.
-27 endpoints under `/api`; protected routes need `Authorization: Bearer <token>`.
+29 endpoints under `/api`; protected routes need `Authorization: Bearer <token>`.
 
 <details>
 <summary><b>Full endpoint list</b></summary>
@@ -200,6 +218,8 @@ JUnit 5 + Mockito **unit tests on the service layer** (7 test classes) — they 
 | GET | `/api/candidates` , `/api/candidates/{id}` | EMPLOYER |
 | GET | `/api/matches/jobs` | CANDIDATE |
 | GET | `/api/matches/jobs/{id}/candidates` | EMPLOYER (owner) |
+| POST | `/api/ai/chat` | logged-in (role-scoped tools) |
+| GET | `/api/ai/chat/history` | logged-in |
 | GET | `/api/admin/stats` , `/api/admin/users` | ADMIN |
 | PATCH | `/api/admin/users/{id}/enabled` | ADMIN |
 | GET | `/api/me` , `/api/health` | logged-in / public |
@@ -259,7 +279,7 @@ The bugs taught me more than the happy path. Grouped by where they hit:
 
 ## Status
 
-Auth + RBAC, core features (jobs, applications, profiles, talent), the three role dashboards, **and AI matching are all live in production** (Gemini + Qdrant on EC2). Next: a reindex/backfill endpoint, then a role-aware AI chatbot (tool-calling agent), and more test coverage (MockMvc / integration).
+Auth + RBAC, core features (jobs, applications, profiles, talent), the three role dashboards, **and AI matching are all live in production** (Gemini + Qdrant on EC2). The latest feature is a **role-aware AI assistant** — a Gemini function-calling agent with role-scoped tools, RAG job search, and persisted chat history. Next: a reindex/backfill endpoint and more test coverage (MockMvc / integration tests, rate limiting).
 
 ---
 Built by **Sumeet Kumar (SKY)** · [github.com/iamsky2002](https://github.com/iamsky2002)
