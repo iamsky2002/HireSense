@@ -31,11 +31,11 @@ const features = [
 
 const Features = () => {
   return (
-    <div className="mt-20 pb-5 px-16">
+    <div className="mt-20 pb-5 px-4 sm:px-8 lg:px-16">
       <div className="text-4xl text-center font-semibold mb-3 text-mine-shaft-100">
         Why <span className="text-bright-sun-400">HireSense</span>?
       </div>
-      <div className="text-lg mx-auto text-mine-shaft-300 text-center w-1/2 mb-12">
+      <div className="text-lg mx-auto text-mine-shaft-300 text-center w-full sm:w-2/3 lg:w-1/2 px-4 mb-12">
         A focused recruitment platform where everything you see is wired to a
         real backend.
       </div>
@@ -43,7 +43,7 @@ const Features = () => {
         {features.map((f, i) => (
           <div
             key={i}
-            className="flex flex-col gap-3 w-[22%] min-w-[230px] bg-mine-shaft-800/60 border border-mine-shaft-700 hover:border-bright-sun-400/50 hover:-translate-y-1 p-5 rounded-xl transition-all"
+            className="flex flex-col gap-3 w-full sm:w-[46%] lg:w-[22%] lg:min-w-[230px] bg-mine-shaft-800/60 border border-mine-shaft-700 hover:border-bright-sun-400/50 hover:-translate-y-1 p-5 rounded-xl transition-all"
           >
             <div className="w-12 h-12 rounded-lg bg-bright-sun-500/15 flex items-center justify-center text-bright-sun-400">
               <f.icon size={26} />

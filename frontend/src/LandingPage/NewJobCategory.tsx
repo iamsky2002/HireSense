@@ -8,13 +8,13 @@ const NewJobCategory = () => {
         Explore <span className="text-bright-sun-400">Career</span>{" "}
         Opportunities
       </div>
-      <div className="text-lg mx-auto text-mine-shaft-300 text-center w-1/2 mb-12">
+      <div className="text-lg mx-auto text-mine-shaft-300 text-center w-full sm:w-2/3 lg:w-1/2 px-4 mb-12">
         Discover opportunities that perfectly match your skills and ambitions.
         Take the next step in your professional journey with us. Begin your next
         great career adventure today.
       </div>
       <Carousel
-        slideSize="22%"
+        slideSize={{ base: "80%", sm: "45%", md: "30%", lg: "22%" }}
         slideGap="md"
         emblaOptions={{ loop: true }}
         classNames={{
@@ -27,7 +27,7 @@ const NewJobCategory = () => {
       >
         {jobCategory.map((category, index) => (
           <Carousel.Slide key={index}>
-            <div className="flex flex-col items-center w-64 gap-3 px-5 pb-5 border border-bright-sun-300 rounded-xl pt-4 cursor-pointer hover:bg-bright-sun-400/10 hover:border-none hover:border-bright-sun-300 hover:shadow-[0_0_0_4px_3px_#a34d00]">
+            <div className="flex flex-col items-center w-64 max-w-full mx-auto gap-3 px-5 pb-5 border border-bright-sun-300 rounded-xl pt-4 cursor-pointer hover:bg-bright-sun-400/10 hover:border-none hover:border-bright-sun-300 hover:shadow-[0_0_0_4px_3px_#a34d00]">
               <div className="p-1 bg-bright-sun-300 rounded-full">
                 <img
                   className="h-8 w-8"

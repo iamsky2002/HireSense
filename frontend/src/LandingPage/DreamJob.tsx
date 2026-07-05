@@ -39,10 +39,10 @@ const DreamJob = () => {
   };
 
   return (
-    <div className="flex items-center px-16 py-12">
+    <div className="flex flex-col lg:flex-row items-center gap-8 px-4 sm:px-8 lg:px-16 py-8 lg:py-12">
       {/* left: headline + real stats + search */}
-      <div className="flex flex-col w-[48%] gap-4">
-        <div className="text-6xl font-bold leading-tight text-mine-shaft-100 [&>span]:text-bright-sun-400">
+      <div className="flex flex-col w-full lg:w-[48%] gap-4">
+        <div className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-mine-shaft-100 [&>span]:text-bright-sun-400">
           Find the <span>right job</span>.
           <br />
           Not just <span>any job</span>.
@@ -87,8 +87,8 @@ const DreamJob = () => {
         </div>
       </div>
 
-      {/* right: real recent jobs, floating */}
-      <div className="w-[52%] flex items-center justify-center">
+      {/* right: real recent jobs, floating (decorative, so hidden on small screens) */}
+      <div className="hidden lg:flex w-full lg:w-[52%] items-center justify-center">
         <div className="relative w-[26rem] h-[24rem]">
           {/* soft glow behind the cards for depth */}
           <div className="pointer-events-none absolute inset-4 bg-bright-sun-500/10 blur-[90px] rounded-full" />

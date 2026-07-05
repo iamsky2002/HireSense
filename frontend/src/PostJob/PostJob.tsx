@@ -108,7 +108,7 @@ const PostJob = ({ jobId }: { jobId?: number }) => {
   };
 
   return (
-    <div className="w-4/5 mx-auto mt-5 p-6 bg-mine-shaft-900 border border-mine-shaft-800 rounded-2xl">
+    <div className="w-11/12 lg:w-4/5 max-w-4xl mx-auto mt-5 p-4 sm:p-6 bg-mine-shaft-900 border border-mine-shaft-800 rounded-2xl">
       <div className="text-2xl font-bold text-mine-shaft-100 mb-6">
         {isEdit ? "Edit Job" : "Post a Job"}
       </div>

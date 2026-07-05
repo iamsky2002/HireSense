@@ -7,16 +7,16 @@ const Working = () => {
       <div className="text-4xl text-center font-semibold mb-3 text-mine-shaft-100">
         How to <span className="text-bright-sun-400">Get Started</span>
       </div>
-      <div className="text-lg mx-auto text-mine-shaft-300 text-center w-1/2 mb-12">
+      <div className="text-lg mx-auto text-mine-shaft-300 text-center w-full sm:w-2/3 lg:w-1/2 px-4 mb-12">
         From building your resume to signing your offer letter, we guide you
         every step of the way. Effortlessly navigate through our platform to
         find and secure your dream job in just a few simple steps.
       </div>
 
-      <div className="flex px-16 justify-between items-center">
-        <div className="w-1/2 flex justify-center">
+      <div className="flex flex-col lg:flex-row px-4 sm:px-8 lg:px-16 gap-10 lg:gap-6 justify-between items-center">
+        <div className="w-full lg:w-1/2 flex justify-center">
           <div className="relative">
-            <img className="w-[30rem]" src="/Working/Girl.png" alt="girl" />
+            <img className="w-[20rem] sm:w-[26rem] lg:w-[30rem]" src="/Working/Girl.png" alt="girl" />
             <div className="w-36 flex top-[15%] right-4 absolute flex-col items-center gap-1 border border-bright-sun-400 rounded-xl py-3 px-1 backdrop-blur-md">
               <Avatar
                 className="!h-16 !w-16"

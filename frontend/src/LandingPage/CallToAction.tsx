@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const CallToAction = () => {
   const navigate = useNavigate();
   return (
-    <div className="mt-20 mb-12 mx-20 bg-gradient-to-br from-mine-shaft-800 to-mine-shaft-950 border border-bright-sun-400/20 rounded-2xl py-12 px-10 flex flex-col items-center text-center gap-4 shadow-xl shadow-black/30">
+    <div className="mt-20 mb-12 mx-4 sm:mx-8 lg:mx-20 bg-gradient-to-br from-mine-shaft-800 to-mine-shaft-950 border border-bright-sun-400/20 rounded-2xl py-12 px-6 sm:px-10 flex flex-col items-center text-center gap-4 shadow-xl shadow-black/30">
       <div className="text-4xl font-semibold text-mine-shaft-100">
         Ready to find your <span className="text-bright-sun-400">next role</span>?
       </div>

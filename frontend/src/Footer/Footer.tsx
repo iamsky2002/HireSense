@@ -39,8 +39,8 @@ const columns = [
 const Footer = () => {
   return (
     <div className="border-t border-mine-shaft-800 mt-10">
-      <div className="pt-12 pb-6 flex gap-5 justify-between px-16">
-        <div className="w-1/3 flex flex-col gap-4">
+      <div className="pt-12 pb-6 px-4 sm:px-8 lg:px-16 grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="col-span-2 lg:col-span-1 flex flex-col gap-4">
           <div className="flex gap-1 items-center text-bright-sun-400">
             <IconChefHatFilled className="h-6 w-6" stroke={2.5} />
             <div className="text-xl font-semibold">HireSense</div>
@@ -99,7 +99,7 @@ const Footer = () => {
       </div>
 
       {/* personal credit + stack */}
-      <div className="border-t border-mine-shaft-800 py-4 px-16 flex flex-wrap justify-between items-center gap-2 text-sm text-mine-shaft-400">
+      <div className="border-t border-mine-shaft-800 py-4 px-4 sm:px-8 lg:px-16 flex flex-wrap justify-between items-center gap-2 text-sm text-mine-shaft-400">
         <div>
           Designed &amp; Developed by{" "}
           <a

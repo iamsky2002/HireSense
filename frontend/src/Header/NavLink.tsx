@@ -1,8 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
 import { Role } from "../api/auth";
 
-// nav links are filtered by role
-const NavLinks = ({ role }: { role?: Role }) => {
+// nav links are filtered by role; vertical mode is for the mobile drawer
+const NavLinks = ({
+  role,
+  vertical,
+  onNavigate,
+}: {
+  role?: Role;
+  vertical?: boolean;
+  onNavigate?: () => void;
+}) => {
   const allLinks = [
     { name: "Dashboard", url: "/dashboard", roles: ["CANDIDATE"] as Role[] },
     { name: "Dashboard", url: "/employer-dashboard", roles: ["EMPLOYER"] as Role[] },
@@ -19,15 +27,39 @@ const NavLinks = ({ role }: { role?: Role }) => {
   const links = allLinks.filter((l) => (role ? l.roles.includes(role) : l.showLoggedOut));
 
   const location = useLocation();
+
+  if (vertical) {
+    return (
+      <div className="flex flex-col text-mine-shaft-200">
+        {links.map((link, index) => {
+          const active = location.pathname === link.url;
+          return (
+            <Link
+              key={index}
+              to={link.url}
+              onClick={onNavigate}
+              className={`py-3 border-b border-mine-shaft-800 ${
+                active ? "text-bright-sun-400 font-medium" : ""
+              }`}
+            >
+              {link.name}
+            </Link>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div className="flex gap-5 text-mine-shaft-300 h-full items-center">
       {links.map((link, index) => (
         <div
           key={index}
-          className={`${location.pathname === link.url
+          className={`${
+            location.pathname === link.url
               ? "border-bright-sun-400 text-bright-sun-400"
               : "border-transparent"
-            } border-t-[3px] h-full flex items-center`}
+          } border-t-[3px] h-full flex items-center`}
         >
           <Link to={link.url}>{link.name}</Link>
         </div>
