@@ -37,6 +37,14 @@ export function parseSections(description: string): { title: string; body: strin
   return sections.length ? sections : null;
 }
 
+// a clean, marker-free snippet for cards/previews (About body, else all bodies joined)
+export function descriptionPreview(description: string): string {
+  const parsed = parseSections(description);
+  if (!parsed) return description;
+  const about = parsed.find((s) => s.title === ABOUT)?.body;
+  return about || parsed.map((s) => s.body).filter(Boolean).join(" ") || description;
+}
+
 // description -> the three form fields (old plain descriptions go into "about")
 export function descriptionToSections(description: string): JobSections {
   const parsed = parseSections(description);

@@ -5,6 +5,10 @@ import { fields } from "../Data/PostJob";
 import { createJob, updateJob, getJob, EmploymentType } from "../api/jobs";
 import { combineSections, descriptionToSections } from "../Data/jobSections";
 
+// a stored value can sit outside the fixed option list (older/seeded jobs), so add it back
+const withCurrent = (options: string[], value: string) =>
+  value && !options.includes(value) ? [value, ...options] : options;
+
 // friendly Job Type labels; value matches the backend EmploymentType enum
 const jobTypeOptions = [
   { value: "FULL_TIME", label: "Full Time" },
@@ -127,7 +131,7 @@ const PostJob = ({ jobId }: { jobId?: number }) => {
           <Select
             label="Experience"
             placeholder="Select experience level"
-            data={fields[2].options}
+            data={withCurrent(fields[2].options, experience)}
             value={experience}
             onChange={(val) => setExperience(val || "")}
           />
@@ -147,7 +151,7 @@ const PostJob = ({ jobId }: { jobId?: number }) => {
           <Select
             label="Location"
             placeholder="Select location"
-            data={fields[4].options}
+            data={withCurrent(fields[4].options, location)}
             value={location}
             onChange={(val) => setLocation(val || "")}
           />

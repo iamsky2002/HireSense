@@ -1,4 +1,5 @@
 import { JobResponse } from "../api/jobs";
+import { descriptionPreview } from "../Data/jobSections";
 
 // turns a backend enum value ("FULL_TIME") into a display label
 const typeLabels: Record<string, string> = {
@@ -40,6 +41,6 @@ export function toCardProps(job: JobResponse) {
     location: job.location || "",
     package: salaryText(job.salaryMin, job.salaryMax),
     postedDaysAgo: daysAgo(job.postedAt),
-    description: job.description,
+    description: descriptionPreview(job.description),
   };
 }
